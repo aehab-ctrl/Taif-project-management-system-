@@ -1713,7 +1713,7 @@ function pageDecisionsCenter(){
   return head('الحوكمة القيادية','مركز القرارات','عناصر تحليلية آلية لدعم ومتابعة القيادة — مولدة من بيانات المحفظة الفعلية (الحالة، الجدول الزمني، الميزانية، الموارد)، وليست قرارات رسمية معتمدة.',
     `<button class="btn ghost" onclick="go('leadership')">← متابعة القيادات</button>
      <button class="btn" onclick="go('decisionAnalytics')">📊 فتح التحليلات</button>`) +
-  <div class="grid" style="margin-bottom:16px">
+  `<div class="grid" style="margin-bottom:16px">
     <div class="card kpi-card"><small>إجمالي عناصر دعم القرار</small><b>${items.length}</b><em>مولدة من المحفظة الحالية</em></div>
     <div class="card kpi-card"><small>أولوية عالية</small><b>${items.filter(i=>i.priority==='عالي').length}</b><em>تحتاج تدخلاً عاجلاً</em></div>
     <div class="card kpi-card"><small>أولوية متوسطة</small><b>${items.filter(i=>i.priority==='متوسط').length}</b><em>تحتاج متابعة</em></div>
@@ -2191,8 +2191,7 @@ function logReportIssued(id){
 function pageTemplates(){
   const opts = state.projects.map(p=>`<option value="${p.id}">${esc(p.code)} — ${esc(p.nameAr)}</option>`).join('');
   return head('النماذج','النماذج والتعبئة الآلية','اربط أي نموذج بمشروع من المحفظة فيتم تعبئته تلقائياً ببياناته الكاملة، أو نزّله فارغاً بالكامل من دون اختيار مشروع.') +
-  `<div class="notice"><strong>طريقة الاستخدام</strong>اختر مشروعاً من القائمة أدناه لتعبئة أي نموذج ببياناته تلقائياً — لا تُترك أي خانة بيانات فارغة (يُعتمد على القيم الفعلية للمشروع، أو على تقدير معقول محسوب تلقائياً عند غيابها). الاستثناء الوحيد: خانات التوقيع وأسماء الأفراد الفعلية تبقى فارغة لتعبئتها يدوياً. النماذج المكتبية (ميثاق، شهادة إنجاز، إغلاق، طلب تغيير، خطة التكاليف) تُصدَّر بصيغة Word، ونماذج التقارير الزمنية (تحديث التقدم، الجدول الزمني) تُصدَّر بصيغة Excel — كلها متوافقة تماماً مع Microsoft Office وتحمل هوية جامعة الطائف.</div>
-  <div class="field" style="max-width:420px;margin-bottom:18px"><label>ربط النماذج بمشروع (اختياري)</label><select id="fillProject"><option value="">بدون مشروع — نموذج فارغ</option>${opts}</select></div>
+  `<div class="field" style="max-width:420px;margin-bottom:18px"><label>ربط النماذج بمشروع (اختياري)</label><select id="fillProject"><option value="">بدون مشروع — نموذج فارغ</option>${opts}</select></div>
 
   <div class="title" style="margin-bottom:8px"><h2>نماذج قابلة للتعبئة التلقائية</h2></div>
   <div class="grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
