@@ -267,12 +267,14 @@ main{padding:26px 28px 60px;max-width:1500px;width:100%;margin:auto}
     <div class="section-label">التقارير</div>
     <button class="nav-btn" data-p="reports" onclick="go('reports')"><span class="ico">📄</span> تقارير المشاريع</button>
     <button class="nav-btn" data-p="templates" onclick="go('templates')"><span class="ico">🧾</span> نماذج فارغة</button>
+    <div class="section-label">الحوكمة القيادية</div>
+    <button class="nav-btn" data-p="leadership" onclick="go('leadership')"><span class="ico">🧭</span> متابعة القيادات والمبادرات</button>
+    <button class="nav-btn" data-p="decisionsCenter" onclick="go('decisionsCenter')"><span class="ico">⚖️</span> مركز القرارات</button>
     <div class="section-label">النظام</div>
     <button class="nav-btn" data-p="notifications" onclick="go('notifications')"><span class="ico">🔔</span> الإشعارات</button>
     <button class="nav-btn" data-p="settings" onclick="go('settings')"><span class="ico">⚙️</span> الإعدادات</button>
     <div class="aside-foot">
       <b>عمادة التعليم الإلكتروني وتقنية المعلومات</b>
-      <small>جميع البيانات تُحفظ محلياً على متصفحك (localStorage). استخدم "نسخة احتياطية" لتصدير بياناتك بانتظام.</small>
     </div>
   </aside>
   <main id="app" tabindex="-1"></main>
@@ -1596,6 +1598,224 @@ function pageRisks(){
   </tr>`}).join('') || `<tr><td colspan="4"><div class="empty">لا توجد مخاطر أو مشكلات مسجلة حالياً.</div></td></tr>`}</tbody></table></div></div>`;
 }
 
+/* ================= LEADERSHIP & INITIATIVES MONITORING ================= */
+function initiativeRollups(){
+  const map = {};
+  state.projects.forEach(p=>{
+    const key = (p.initiative||'').trim() || 'مشاريع بدون مبادرة مرتبطة';
+    if(!map[key]) map[key] = {name:key, projects:[], transformationGoal:p.transformationGoal, universityGoal:p.universityGoal, owner:p.owner};
+    map[key].projects.push(p);
+  });
+  return Object.values(map).map(g=>{
+    const comp = g.projects.length ? Math.round(g.projects.reduce((a,p)=>a+Number(p.currentCompletion||0),0)/g.projects.length) : 0;
+    const statuses = [...new Set(g.projects.map(p=>overallStatus(p).label))];
+    const starts = g.projects.map(p=>p.startDate).filter(Boolean).sort();
+    const ends = g.projects.map(p=>p.endDate).filter(Boolean).sort();
+    return {...g, avgCompletion:comp, statuses, start:starts[0], end:ends[ends.length-1]};
+  }).sort((a,b)=>b.projects.length-a.projects.length);
+}
+function pageLeadership(){
+  const rollups = initiativeRollups();
+  const ps = state.projects;
+  const activeInits = rollups.filter(r=>r.projects.some(p=>p.phase===PHASES[2])).length;
+  const avgAll = ps.length ? Math.round(ps.reduce((a,p)=>a+Number(p.currentCompletion||0),0)/ps.length) : 0;
+  const completed = ps.filter(p=>Number(p.currentCompletion||0)>=100).length;
+  const attention = ps.filter(p=>Number(p.currentCompletion||0)<50 || p.ragOverall==='متأخر').length;
+
+  return head('EXECUTIVE','متابعة القيادات والمبادرات','لوحة متابعة قيادية لمبادرات التحول الرقمي، مبنية مباشرة على بيانات المحفظة الحالية (65 مشروعاً).',
+    `<button class="btn ghost" onclick="go('decisionsCenter')">مركز القرارات ←</button>`) +
+  `<div class="grid" style="margin-bottom:15px">
+    <div class="card kpi-card"><small>إجمالي المبادرات</small><b>${rollups.length}</b><em>مستخرجة من المحفظة</em></div>
+    <div class="card kpi-card"><small>إجمالي المشاريع</small><b>${ps.length}</b><em>عبر جميع المبادرات</em></div>
+    <div class="card kpi-card"><small>مبادرات نشطة</small><b>${activeInits}</b><em>قيد التنفيذ حالياً</em></div>
+    <div class="card kpi-card"><small>متوسط الإنجاز العام</small><b>${avgAll}%</b><em>عبر المحفظة بأكملها</em></div>
+    <div class="card kpi-card"><small>مشاريع مكتملة</small><b>${completed}</b><em>وصلت 100%</em></div>
+    <div class="card kpi-card"><small>تحتاج متابعة قيادية</small><b>${attention}</b><em>إنجاز أقل من 50% أو متأخرة</em></div>
+  </div>
+  <div class="card" style="margin-bottom:15px">
+    <div class="title"><h2>محفظة المبادرات القيادية</h2></div>
+    <div class="grid" style="grid-template-columns:repeat(3,1fr)">
+      ${rollups.map(r=>`
+        <div class="stat-box" style="text-align:right;padding:14px">
+          <b style="display:block;font-size:13px;margin-bottom:6px">${esc(r.name)}</b>
+          ${r.universityGoal?`<div class="small muted" style="margin-bottom:6px">${esc(r.universityGoal)}</div>`:''}
+          <div class="progress-row"><div class="bar"><span style="width:${r.avgCompletion}%"></span></div><small>${r.avgCompletion}%</small></div>
+          <div class="small muted" style="margin-top:6px">${r.projects.length} مشروع · ${esc(r.statuses.join('، '))}</div>
+          ${r.owner?`<div class="small muted">المالك: ${esc(r.owner)}</div>`:''}
+        </div>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="title"><h2>جدول المتابعة القيادية (Leadership Monitoring)</h2></div>
+    <div class="table-wrap"><table class="table"><thead><tr><th>المبادرة</th><th>المشاريع</th><th>متوسط الإنجاز</th><th>الحالة</th><th>الفترة الزمنية</th><th>مستوى الانتباه</th></tr></thead>
+    <tbody>${rollups.map(r=>{
+      const attn = r.avgCompletion<50 ? 'يحتاج متابعة' : 'مستقر';
+      return `<tr>
+        <td>${esc(r.name)}</td>
+        <td>${r.projects.length}</td>
+        <td>${r.avgCompletion}%</td>
+        <td class="small">${esc(r.statuses.join('، ')||'—')}</td>
+        <td class="small">${fmtDate(r.start)} → ${fmtDate(r.end)}</td>
+        <td>${statusBadge(attn, attn==='يحتاج متابعة'?'amber':'green')}</td>
+      </tr>`;
+    }).join('')}</tbody></table></div>
+  </div>`;
+}
+
+/* ================= DECISIONS CENTER ================= */
+function decisionSupportItems(){
+  const items = [];
+  const nowD = new Date();
+  state.projects.forEach(p=>{
+    const comp = Number(p.currentCompletion||0);
+    if(comp < 20 && p.phase===PHASES[2]){
+      items.push({title:'متابعة انخفاض نسبة الإنجاز', project:p, evidence:`نسبة الإنجاز الحالية ${comp}% خلال مرحلة التنفيذ والمتابعة`, priority:'عالي', action:'مراجعة خطة العمل ووضع خطة تسريع للإنجاز'});
+    }
+    if(p.ragOverall==='متأخر'){
+      items.push({title:'معالجة تعثر المشروع', project:p, evidence:`الحالة العامة: متأخر · حالة الجدول الزمني: ${p.ragSchedule}`, priority:'عالي', action:'مراجعة الجدول الزمني واعتماد إجراءات التصحيح'});
+    }
+    if(p.endDate && new Date(p.endDate) < nowD && comp < 100){
+      items.push({title:'مراجعة تجاوز الموعد النهائي', project:p, evidence:`تجاوز الموعد النهائي المخطط (${fmtDate(p.endDate)}) والإنجاز الحالي ${comp}%`, priority:'عالي', action:'اعتماد موعد نهائي منقّح أو تسريع تنفيذ الأعمال المتبقية'});
+    }
+    const budget = Number(p.allocatedBudget||0), spend = Number(p.actualSpend||0);
+    if(budget>0 && spend>budget){
+      items.push({title:'مراجعة تجاوز الميزانية المعتمدة', project:p, evidence:`الصرف الفعلي ${fmtMoney(spend)} يتجاوز الميزانية المعتمدة ${fmtMoney(budget)}`, priority:'عالي', action:'اعتماد ميزانية إضافية أو ضبط نطاق العمل'});
+    } else if(budget>0 && comp>0 && spend > budget*(comp/100)*1.15){
+      items.push({title:'متابعة معدل الصرف مقابل الإنجاز', project:p, evidence:`معدل الصرف الحالي يفوق نسبة الإنجاز الفعلي (${comp}%)`, priority:'متوسط', action:'مراجعة كفاءة الصرف مقابل التقدم الفعلي للمشروع'});
+    }
+    if(!p.manager){
+      items.push({title:'تحديد مدير للمشروع', project:p, evidence:'لا يوجد مدير مشروع محدد حالياً في بيانات النظام', priority:'متوسط', action:'تعيين مدير مشروع واعتماد المسؤولية التنفيذية'});
+    }
+    if(p.ragResources==='متأخر' || p.ragResources==='يحتاج متابعة'){
+      items.push({title:'متابعة كفاية الموارد', project:p, evidence:`حالة الموارد الحالية: ${p.ragResources}`, priority: p.ragResources==='متأخر'?'عالي':'متوسط', action:'مراجعة تخصيص الموارد البشرية والتقنية للمشروع'});
+    }
+  });
+  return items;
+}
+function decisionRows(arr){
+  return arr.map(d=>`<tr>
+    <td><b>${esc(d.title)}</b></td>
+    <td><button class="link" onclick="go('projectDetail','${d.project.id}')">${esc(d.project.nameAr)}</button></td>
+    <td class="small">${esc(d.evidence)}</td>
+    <td>${statusBadge(d.priority, d.priority==='عالي'?'red':'amber')}</td>
+    <td class="small">${esc(d.action)}</td>
+  </tr>`).join('') || `<tr><td colspan="5"><div class="empty"><strong>لا توجد عناصر دعم قرار مطابقة</strong>المحفظة مستقرة وفق البيانات الحالية.</div></td></tr>`;
+}
+function filterDecisionsCenter(){
+  const pr = document.getElementById('dcPriority').value;
+  const it = document.getElementById('dcInitiative').value;
+  const arr = decisionSupportItems().filter(d=>(pr==='الكل'||d.priority===pr)&&(!it||d.project.initiative===it));
+  document.getElementById('dcBody').innerHTML = decisionRows(arr);
+}
+function pageDecisionsCenter(){
+  const items = decisionSupportItems();
+  const opts = [...new Set(state.projects.map(p=>p.initiative).filter(Boolean))];
+  return head('الحوكمة القيادية','مركز القرارات','عناصر تحليلية آلية لدعم ومتابعة القيادة — مولدة من بيانات المحفظة الفعلية (الحالة، الجدول الزمني، الميزانية، الموارد)، وليست قرارات رسمية معتمدة.',
+    `<button class="btn ghost" onclick="go('leadership')">← متابعة القيادات</button>
+     <button class="btn" onclick="go('decisionAnalytics')">📊 فتح التحليلات</button>`) +
+  <div class="grid" style="margin-bottom:16px">
+    <div class="card kpi-card"><small>إجمالي عناصر دعم القرار</small><b>${items.length}</b><em>مولدة من المحفظة الحالية</em></div>
+    <div class="card kpi-card"><small>أولوية عالية</small><b>${items.filter(i=>i.priority==='عالي').length}</b><em>تحتاج تدخلاً عاجلاً</em></div>
+    <div class="card kpi-card"><small>أولوية متوسطة</small><b>${items.filter(i=>i.priority==='متوسط').length}</b><em>تحتاج متابعة</em></div>
+    <div class="card kpi-card"><small>مشاريع متأثرة</small><b>${new Set(items.map(i=>i.project.id)).size}</b><em>من إجمالي ${state.projects.length} مشروعاً</em></div>
+  </div>
+  <div class="card">
+    <div class="filters">
+      <div class="field"><label>الأولوية</label><select id="dcPriority" onchange="filterDecisionsCenter()"><option>الكل</option><option>عالي</option><option>متوسط</option></select></div>
+      <div class="field"><label>المبادرة</label><select id="dcInitiative" onchange="filterDecisionsCenter()"><option value="">كل المبادرات</option>${opts.map(o=>`<option>${esc(o)}</option>`).join('')}</select></div>
+    </div>
+    <div class="table-wrap"><table class="table"><thead><tr><th>الموضوع</th><th>المشروع</th><th>البيانات الداعمة</th><th>الأولوية</th><th>الإجراء المقترح</th></tr></thead>
+    <tbody id="dcBody">${decisionRows(items)}</tbody></table></div>
+  </div>`;
+}
+
+/* ================= DECISION ANALYTICS (فتح التحليلات) ================= */
+function riskScoreFor(p){
+  let score = 0; const reasons = [];
+  const comp = Number(p.currentCompletion||0);
+  if(p.ragOverall==='متأخر'){ score+=3; reasons.push('الحالة العامة متأخرة'); }
+  else if(p.ragOverall==='يحتاج متابعة'){ score+=1; reasons.push('الحالة العامة تحتاج متابعة'); }
+  if(comp<20 && p.phase===PHASES[2]){ score+=2; reasons.push('إنجاز منخفض في مرحلة التنفيذ'); }
+  if(p.endDate && new Date(p.endDate)<new Date() && comp<100){ score+=2; reasons.push('تجاوز الموعد النهائي المخطط'); }
+  const budget=Number(p.allocatedBudget||0), spend=Number(p.actualSpend||0);
+  if(budget>0 && spend>budget){ score+=2; reasons.push('تجاوز الميزانية المعتمدة'); }
+  else if(budget>0 && comp>0 && spend>budget*(comp/100)*1.15){ score+=1; reasons.push('معدل صرف أعلى من نسبة الإنجاز'); }
+  if(!p.manager){ score+=1; reasons.push('لا يوجد مدير مشروع محدد'); }
+  if(p.ragResources==='متأخر'){ score+=2; reasons.push('نقص حاد في الموارد'); }
+  else if(p.ragResources==='يحتاج متابعة'){ score+=1; reasons.push('كفاية الموارد تحتاج متابعة'); }
+  const level = score>=5 ? 'عالي' : score>=2 ? 'متوسط' : 'منخفض';
+  if(!reasons.length) reasons.push('لا توجد مؤشرات مخاطرة حالياً');
+  return {score, level, reasons};
+}
+function riskRecommendationText(level, reasons){
+  if(level==='عالي') return 'مراجعة تنفيذية عاجلة موصى بها — أبرز الأسباب: ' + reasons.slice(0,2).join('، ');
+  if(level==='متوسط') return 'متابعة دورية موصى بها لمعالجة: ' + (reasons[0]||'نقاط الانتباه الحالية');
+  return 'المشروع مستقر ضمن المؤشرات الحالية — الاستمرار بالمتابعة الروتينية';
+}
+function pageDecisionAnalytics(){
+  const ps = state.projects;
+  const scored = ps.map(p=>({p, ...riskScoreFor(p)}));
+  const high = scored.filter(x=>x.level==='عالي').length;
+  const med = scored.filter(x=>x.level==='متوسط').length;
+  const avgComp = ps.length ? Math.round(ps.reduce((a,p)=>a+Number(p.currentCompletion||0),0)/ps.length) : 0;
+  const overBudget = ps.filter(p=>Number(p.allocatedBudget||0)>0 && Number(p.actualSpend||0)>Number(p.allocatedBudget||0));
+  const totalBudget = ps.reduce((a,p)=>a+Number(p.allocatedBudget||0),0);
+  const totalSpend = ps.reduce((a,p)=>a+Number(p.actualSpend||0),0);
+
+  const statusCounts = {};
+  ps.forEach(p=>{ const s=overallStatus(p).label; statusCounts[s]=(statusCounts[s]||0)+1; });
+
+  const initRollups = initiativeRollups().slice(0,10);
+
+  return head('INTELLIGENCE','التحليلات التنفيذية لمركز القرارات','تحليلات حقيقية مولدة مباشرة من بيانات المحفظة الحالية (65 مشروعاً فعلياً) لدعم القرار القيادي — لا بيانات وهمية.',
+    `<button class="btn ghost" onclick="go('decisionsCenter')">← العودة لمركز القرارات</button>`) +
+  `<div class="grid" style="margin-bottom:15px">
+    <div class="card kpi-card"><small>متوسط الإنجاز العام</small><b>${avgComp}%</b><em>عبر ${ps.length} مشروعاً</em></div>
+    <div class="card kpi-card"><small>مشاريع عالية المخاطر</small><b>${high}</b><em>تحتاج تدخلاً عاجلاً</em></div>
+    <div class="card kpi-card"><small>مشاريع متوسطة المخاطر</small><b>${med}</b><em>تحتاج متابعة</em></div>
+    <div class="card kpi-card"><small>مشاريع تتجاوز الميزانية</small><b>${overBudget.length}</b><em>من إجمالي المحفظة</em></div>
+  </div>
+  <div class="two">
+    <section class="card">
+      <div class="title"><h2>توزيع حالة المحفظة</h2></div>
+      ${Object.entries(statusCounts).map(([label,count])=>`
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:12px"><b>${esc(label)}</b><span class="muted">${count} مشروع</span></div>
+          <div class="bar" style="margin-top:4px"><span style="width:${Math.round(count/ps.length*100)}%"></span></div>
+        </div>`).join('')}
+    </section>
+    <section class="card">
+      <div class="title"><h2>الميزانية العامة للمحفظة</h2></div>
+      <div class="three">
+        <div class="stat-box"><small>إجمالي الميزانية المعتمدة</small><b style="font-size:13px">${fmtMoney(totalBudget)}</b></div>
+        <div class="stat-box"><small>إجمالي الصرف الفعلي</small><b style="font-size:13px">${fmtMoney(totalSpend)}</b></div>
+        <div class="stat-box"><small>نسبة الصرف الإجمالية</small><b>${totalBudget?Math.round(totalSpend/totalBudget*100):0}%</b></div>
+      </div>
+      <div class="progress-row" style="margin-top:12px"><div class="bar"><span style="width:${totalBudget?Math.min(100,Math.round(totalSpend/totalBudget*100)):0}%"></span></div></div>
+      ${overBudget.length?`<div class="notice" style="margin-top:12px"><strong>تنبيه تجاوز الميزانية</strong>${overBudget.slice(0,5).map(p=>esc(p.nameAr)).join('، ')}${overBudget.length>5?' وغيرها...':''}</div>`:''}
+    </section>
+  </div>
+  <div class="card" style="margin-top:15px">
+    <div class="title"><h2>متوسط الإنجاز حسب المبادرة</h2></div>
+    ${initRollups.map(r=>`
+      <div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;font-size:12px"><b>${esc(r.name)}</b><span class="muted">${r.projects.length} مشروع · ${r.avgCompletion}%</span></div>
+        <div class="bar" style="margin-top:4px"><span style="width:${r.avgCompletion}%"></span></div>
+      </div>`).join('')}
+  </div>
+  <div class="card" style="margin-top:15px">
+    <div class="title"><h2>ترتيب المشاريع حسب مستوى المخاطر</h2><div class="legend">${statusBadge('عالي','red')}${statusBadge('متوسط','amber')}${statusBadge('منخفض','green')}</div></div>
+    <div class="table-wrap"><table class="table"><thead><tr><th>المشروع</th><th>الحالة</th><th>الإنجاز</th><th>مستوى المخاطر</th><th>التوصية</th></tr></thead>
+    <tbody>${scored.sort((a,b)=>b.score-a.score).map(x=>{const st=overallStatus(x.p);return `<tr>
+      <td><button class="link" onclick="go('projectDetail','${x.p.id}')">${esc(x.p.nameAr)}</button></td>
+      <td>${statusBadge(st.label, st.cls)}</td>
+      <td>${x.p.currentCompletion||0}%</td>
+      <td>${statusBadge(x.level, x.level==='عالي'?'red':x.level==='متوسط'?'amber':'green')}</td>
+      <td class="small">${esc(riskRecommendationText(x.level, x.reasons))}</td>
+    </tr>`}).join('')}</tbody></table></div>
+  </div>`;
+}
+
 /* ================= REPORTS (list) ================= */
 function pageReports(){
   return head('التقارير','تقارير أداء المشاريع','إنشاء تقرير رسمي قابل للطباعة والتصدير لأي مشروع في المحفظة.',
@@ -2577,6 +2797,9 @@ function render(){
   else if(currentPage==='risks') html = pageRisks();
   else if(currentPage==='reports') html = pageReports();
   else if(currentPage==='templates') html = pageTemplates();
+  else if(currentPage==='leadership') html = pageLeadership();
+  else if(currentPage==='decisionsCenter') html = pageDecisionsCenter();
+  else if(currentPage==='decisionAnalytics') html = pageDecisionAnalytics();
   else if(currentPage==='notifications') html = pageNotifications();
   else if(currentPage==='settings') html = pageSettings();
   else html = pageDashboard();
