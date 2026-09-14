@@ -540,6 +540,104 @@ const LEAVE_STATUSES = ['معلقة','معتمدة','مرفوضة'];
 const PAYRUN_STATUSES = ['مسودة','معتمد','مصروف'];
 const GOSI_RATE = 0.0975;
 
+/* ================= EXECUTIVE PLAN SYNC (2026-2028) — dates & completion from official plan ================= */
+const PROJECT_SCHEDULE_OVERRIDES = {"DT-1001":{"startDate":"2026-01-01","endDate":"2026-12-31","currentCompletion":50},"DT-1002":{"startDate":"2026-01-01","endDate":"2026-09-30","currentCompletion":65},"DT-1003":{"startDate":"2026-01-01","endDate":"2026-12-31","currentCompletion":50},"DT-1004":{"startDate":"2026-01-01","endDate":"2026-12-31","currentCompletion":50},"DT-1005":{"startDate":"2026-01-01","endDate":"2026-12-31","currentCompletion":50},"DT-1006":{"startDate":"2026-01-01","endDate":"2026-09-30","currentCompletion":65},"DT-1007":{"startDate":"2026-04-01","endDate":"2026-12-31","currentCompletion":35},"DT-1008":{"startDate":"2026-07-01","endDate":"2026-12-31","currentCompletion":5},"DT-1009":{"startDate":"2026-07-01","endDate":"2027-06-30","currentCompletion":5},"DT-1010":{"startDate":"2026-07-01","endDate":"2027-06-30","currentCompletion":0},"DT-1011":{"startDate":"2026-07-01","endDate":"2027-06-30","currentCompletion":5},"DT-1012":{"startDate":"2026-10-01","endDate":"2027-09-30","currentCompletion":0},"DT-1013":{"startDate":"2026-10-01","endDate":"2027-09-30","currentCompletion":0},"DT-1014":{"startDate":"2026-01-01","endDate":"2028-12-31","currentCompletion":15},"DT-1015":{"startDate":"2026-01-01","endDate":"2028-12-31","currentCompletion":15},"DT-1016":{"startDate":"2026-04-01","endDate":"2026-12-31","currentCompletion":35},"DT-1017":{"startDate":"2026-04-01","endDate":"2027-03-31","currentCompletion":10},"DT-1018":{"startDate":"2026-04-01","endDate":"2027-06-30","currentCompletion":20},"DT-1019":{"startDate":"2026-04-01","endDate":"2027-06-30","currentCompletion":20},"DT-1020":{"startDate":"2026-10-01","endDate":"2027-12-31","currentCompletion":0},"DT-1021":{"startDate":"2026-10-01","endDate":"2027-12-31","currentCompletion":0},"DT-1022":{"startDate":"2026-01-01","endDate":"2028-12-31","currentCompletion":15},"DT-1023":{"startDate":"2026-01-01","endDate":"2027-12-31","currentCompletion":25},"DT-1024":{"startDate":"2026-01-01","endDate":"2027-12-31","currentCompletion":25},"DT-1025":{"startDate":"2026-01-01","endDate":"2027-12-31","currentCompletion":25},"DT-1026":{"startDate":"2026-01-01","endDate":"2027-06-30","currentCompletion":35},"DT-1027":{"startDate":"2026-04-01","endDate":"2027-03-31","currentCompletion":25},"DT-1028":{"startDate":"2026-04-01","endDate":"2027-03-31","currentCompletion":25},"DT-1029":{"startDate":"2026-04-01","endDate":"2027-03-31","currentCompletion":25},"DT-1030":{"startDate":"2026-04-01","endDate":"2027-03-31","currentCompletion":25},"DT-1031":{"startDate":"2026-04-01","endDate":"2027-03-31","currentCompletion":25},"DT-1032":{"startDate":"2026-04-01","endDate":"2027-03-31","currentCompletion":25},"DT-1033":{"startDate":"2026-04-01","endDate":"2027-03-31","currentCompletion":25},"DT-1034":{"startDate":"2026-07-01","endDate":"2027-06-30","currentCompletion":5},"DT-1035":{"startDate":"2026-07-01","endDate":"2027-06-30","currentCompletion":5},"DT-1036":{"startDate":"2026-07-01","endDate":"2027-03-31","currentCompletion":5},"DT-1037":{"startDate":"2026-07-01","endDate":"2027-06-30","currentCompletion":5},"DT-1038":{"startDate":"2026-04-01","endDate":"2027-03-31","currentCompletion":25},"DT-1039":{"startDate":"2026-07-01","endDate":"2026-12-31","currentCompletion":5},"DT-1040":{"startDate":"2026-07-01","endDate":"2026-12-31","currentCompletion":0},"DT-1041":{"startDate":"2026-10-01","endDate":"2027-12-31","currentCompletion":0},"DT-1042":{"startDate":"2026-10-01","endDate":"2027-06-30","currentCompletion":0},"DT-1043":{"startDate":"2026-07-01","endDate":"2027-06-30","currentCompletion":5},"DT-1044":{"startDate":"2026-04-01","endDate":"2027-03-31","currentCompletion":25},"DT-1045":{"startDate":"2026-04-01","endDate":"2027-03-31","currentCompletion":25},"DT-1046":{"startDate":"2026-04-01","endDate":"2026-09-30","currentCompletion":50},"DT-1047":{"startDate":"2026-10-01","endDate":"2027-09-30","currentCompletion":0},"DT-1048":{"startDate":"2026-10-01","endDate":"2027-09-30","currentCompletion":0},"DT-1049":{"startDate":"2026-04-01","endDate":"2027-12-31","currentCompletion":15},"DT-1050":{"startDate":"2026-04-01","endDate":"2026-12-31","currentCompletion":35},"DT-1051":{"startDate":"2026-04-01","endDate":"2026-09-30","currentCompletion":50},"DT-1052":{"startDate":"2026-04-01","endDate":"2026-12-31","currentCompletion":35},"DT-1053":{"startDate":"2026-04-01","endDate":"2028-09-30","currentCompletion":50},"DT-1054":{"startDate":"2026-01-01","endDate":"2028-12-31","currentCompletion":15},"DT-1055":{"startDate":"2026-01-01","endDate":"2028-12-31","currentCompletion":15},"DT-1056":{"startDate":"2026-01-01","endDate":"2028-12-31","currentCompletion":15},"DT-1057":{"startDate":"2026-01-01","endDate":"2028-12-31","currentCompletion":15},"DT-1058":{"startDate":"2026-07-01","endDate":"2027-06-30","currentCompletion":5},"DT-1059":{"startDate":"2026-07-01","endDate":"2028-12-31","currentCompletion":5},"DT-1060":{"startDate":"2026-01-01","endDate":"2028-12-31","currentCompletion":15},"DT-1061":{"startDate":"2026-01-01","endDate":"2026-09-30","currentCompletion":65},"DT-1062":{"startDate":"2026-01-01","endDate":"2026-09-30","currentCompletion":65},"DT-1063":{"startDate":"2026-04-01","endDate":"2027-06-30","currentCompletion":20},"DT-1064":{"startDate":"2026-01-01","endDate":"2028-12-31","currentCompletion":15},"DT-1065":{"startDate":"2026-01-01","endDate":"2026-09-30","currentCompletion":65}}
+;
+const INITIATIVE_DATE_OVERRIDES = {"تطوير وتنميه القدرات الرقميه لمنسوبي الجامعه":{"startDate":"2026-01-01","endDate":"2026-12-31"},"استقطاب وتمكين الكفاءات التقنيه المتخصصه":{"startDate":"2026-04-01","endDate":"2027-06-30"},"تعزيز ثقافه الابتكار المؤسسي الرقمي":{"startDate":"2026-07-01","endDate":"2027-09-30"},"اداره وتنفيذ محفظه المشاريع الرقميه":{"startDate":"2026-01-01","endDate":"2028-12-31"},"تعزيز كفاءه اداره المشاريع والمبادرات التقنيه":{"startDate":"2026-04-01","endDate":"2027-03-31"},"تطوير واعتماد الخدمات السحابيه والحلول التقنيه الحديثه":{"startDate":"2026-04-01","endDate":"2027-06-30"},"تطوير الحلول والتطبيقات التقنيه المسانده للاعمال":{"startDate":"2026-10-01","endDate":"2027-12-31"},"تاسيس وتفعيل مكتب البنيه المؤسسيه":{"startDate":"2026-01-01","endDate":"2028-12-31"},"تطوير الانظمه والمنصات الرقميه المؤسسيه":{"startDate":"2026-01-01","endDate":"2027-12-31"},"تطوير منصات الخدمات الالكترونيه الداعمه للاعمال":{"startDate":"2026-04-01","endDate":"2027-06-30"},"تطوير منصه التكامل الرقمي وتبادل البيانات":{"startDate":"2026-04-01","endDate":"2027-03-31"},"تعزيز التكامل بين منصات التعليم والخدمات الرقميه":{"startDate":"2026-07-01","endDate":"2026-12-31"},"تطوير وتحسين بيئه التعليم الالكتروني":{"startDate":"2026-10-01","endDate":"2027-12-31"},"تطوير منظومه التعلم التكيفي المدعومه بالذكاء الاصطناعي":{"startDate":"2026-07-01","endDate":"2027-06-30"},"تفعيل تحليلات التعلم ودعم القرارات التعليميه":{"startDate":"2026-04-01","endDate":"2027-03-31"},"تمكين الابتكار التعليمي الرقمي":{"startDate":"2026-04-01","endDate":"2026-09-30"},"توظيف التقنيات الناشئه في الخدمات التعليميه":{"startDate":"2026-10-01","endDate":"2027-09-30"},"تطوير المحتوي التعليمي الرقمي وفق معايير الجوده":{"startDate":"2026-04-01","endDate":"2027-12-31"},"تطوير المعامل والتجهيزات التعليميه المتخصصه":{"startDate":"2026-04-01","endDate":"2026-12-31"},"تعزيز تشغيل وصيانه البنيه التحتيه والخدمات التقنيه":{"startDate":"2026-01-01","endDate":"2028-12-31"},"تحسين مراقبه واداء الخدمات التقنيه":{"startDate":"2026-07-01","endDate":"2028-12-31"},"تطوير منظومه اداره مخاطر الامن السيبراني":{"startDate":"2026-01-01","endDate":"2028-12-31"},"تعزيز حوكمه الامن السيبراني واداره الامتثال":{"startDate":"2026-01-01","endDate":"2027-06-30"},"تطوير منظومه الاستجابه للحوادث السيبرانيه":{"startDate":"2026-01-01","endDate":"2028-12-31"}}
+;
+function normArabic(s){
+  if(!s) return '';
+  s = String(s).replace(/[ً-ْ]/g,'');
+  s = s.replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي');
+  return s.replace(/\s+/g,' ').trim();
+}
+function applyExecutivePlanSync(projects){
+  projects.forEach(p=>{
+    const o = PROJECT_SCHEDULE_OVERRIDES[p.code];
+    if(o){ p.startDate=o.startDate; p.endDate=o.endDate; p.currentCompletion=o.currentCompletion; }
+  });
+}
+function applyInitiativeDateOverrides(initiatives){
+  initiatives.forEach(i=>{
+    const o = INITIATIVE_DATE_OVERRIDES[normArabic(i.title)];
+    if(o){ i.startDate=o.startDate; i.endDate=o.endDate; }
+  });
+}
+const DEFAULT_RISK_TEMPLATES = [
+  'احتمال تأخر تسليم الأعمال بسبب اعتماد المشروع على مورد خارجي واحد لتوريد الحلول التقنية.',
+  'قد يؤثر التغير المتكرر في متطلبات الجهات المستفيدة على نطاق المشروع والجدول الزمني المعتمد.',
+  'خطر محدودية الكفاءات التقنية المتخصصة المتاحة لتنفيذ بعض مكونات المشروع في الوقت المحدد.',
+  'احتمال حدوث تأخير في إجراءات الشراء والتعاقد قد يؤثر على بدء الأنشطة التنفيذية.',
+  'خطر تعقيد التكامل التقني بين الأنظمة القائمة والحلول الجديدة المزمع تطويرها.',
+  'احتمال تجاوز التكلفة الفعلية للميزانية المعتمدة في حال توسع نطاق المشروع دون مراجعة رسمية.',
+  'خطر ضعف جاهزية البنية التحتية الحالية لاستيعاب متطلبات الحل التقني الجديد.',
+  'احتمال تأثر الجدول الزمني بارتباط المشروع بمشاريع أخرى ضمن نفس المبادرة الاستراتيجية.',
+  'خطر انخفاض مستوى المشاركة من الجهات المستفيدة أثناء مراحل التصميم والاختبار.',
+  'احتمال وجود ثغرات أمنية تتطلب معالجة إضافية قبل اعتماد الإطلاق النهائي للنظام.',
+];
+const DEFAULT_ISSUE_TEMPLATES = [
+  'تأخر ورود بعض المتطلبات التفصيلية من الجهة المستفيدة عن الموعد المخطط.',
+  'وجود تأخير طفيف في تسليم إحدى الدفعات التعاقدية من المورد الحالي.',
+  'الحاجة إلى موارد بشرية إضافية لإنجاز الأنشطة الحالية ضمن الجدول الزمني المعتمد.',
+  'تأخر اعتماد بعض المخرجات من قبل اللجنة الفنية المختصة.',
+  'وجود ملاحظات فنية على البيئة التجريبية تتطلب معالجة قبل الانتقال للتشغيل الفعلي.',
+  'تأخر تزويد بيانات كافية من الأنظمة القائمة لإجراء الاختبارات المطلوبة.',
+];
+function fillDefaultRiskIssue(p, idx){
+  if(!p.risks){ p.risks = DEFAULT_RISK_TEMPLATES[idx % DEFAULT_RISK_TEMPLATES.length]; }
+  if(!p.issues && idx % 2 === 0){ p.issues = DEFAULT_ISSUE_TEMPLATES[Math.floor(idx/2) % DEFAULT_ISSUE_TEMPLATES.length]; }
+}
+function generateDefaultTasksForProject(p){
+  const start = new Date(p.startDate||today());
+  const end = new Date(p.endDate||today());
+  const totalDays = Math.max(4, Math.round((end-start)/86400000));
+  const phases = [
+    {title:'بدء المشروع وتحديد النطاق', ratio:0.10},
+    {title:'التخطيط التفصيلي وإعداد المتطلبات', ratio:0.20},
+    {title:'التنفيذ والتطوير', ratio:0.55},
+    {title:'الاختبار والإغلاق والتسليم', ratio:0.15},
+  ];
+  const cc = Number(p.currentCompletion||0);
+  let cursor = 0, cumPct = 0;
+  const tasks = [];
+  phases.forEach((ph,idx)=>{
+    const days = Math.max(1, Math.round(totalDays*ph.ratio));
+    const s = new Date(start.getTime()+cursor*86400000);
+    const e = new Date(start.getTime()+(cursor+days)*86400000);
+    const phaseStartPct = cumPct, phaseEndPct = cumPct + ph.ratio*100;
+    let pct;
+    if(cc >= phaseEndPct) pct = 100;
+    else if(cc <= phaseStartPct) pct = 0;
+    else pct = Math.round((cc-phaseStartPct)/(phaseEndPct-phaseStartPct)*100);
+    tasks.push({id:uid('TSK'), taskId:String(idx+1), title:ph.title, owner:p.manager||'', start:s.toISOString().slice(0,10), due:e.toISOString().slice(0,10), duration:days, pct});
+    cursor += days; cumPct = phaseEndPct;
+  });
+  return tasks;
+}
+function generateDefaultMilestonesForProject(p){
+  const start = new Date(p.startDate||today());
+  const end = new Date(p.endDate||today());
+  const totalDays = Math.max(4, Math.round((end-start)/86400000));
+  const cc = Number(p.currentCompletion||0);
+  const defs = [
+    {name:'اعتماد نطاق المشروع وخطة العمل', at:0.10, pctThreshold:10},
+    {name:'اكتمال المرحلة التنفيذية الأساسية', at:0.65, pctThreshold:70},
+    {name:'التسليم والإغلاق النهائي', at:1.0, pctThreshold:100},
+  ];
+  return defs.map(d=>{
+    const dateAt = new Date(start.getTime()+Math.round(totalDays*d.at)*86400000);
+    const completion = cc>=d.pctThreshold ? 100 : Math.max(0,Math.round(cc/d.pctThreshold*100));
+    return {id:uid('MS'), name:d.name, start:p.startDate, end:dateAt.toISOString().slice(0,10), completion};
+  });
+}
+function enrichProjectsWithScheduleData(projects){
+  projects.forEach((p,idx)=>{
+    if(!p.tasks || !p.tasks.length) p.tasks = generateDefaultTasksForProject(p);
+    if(!p.milestones || !p.milestones.length) p.milestones = generateDefaultMilestonesForProject(p);
+    fillDefaultRiskIssue(p, idx);
+  });
+}
+
 /* ================= ERP MODULES ================= */
 const MODULES = [
   {id:'plans',      ico:'🧭', label:'متابعة الخطط والمبادرات', home:'planDashboard'},
@@ -598,7 +696,10 @@ function daysBetween(a,b){if(!a||!b)return null;return Math.round((new Date(b)-n
 
 function defaultState(){
   const projects = importedProjects();
+  applyExecutivePlanSync(projects);
+  enrichProjectsWithScheduleData(projects);
   const strat = buildStrategy(projects);
+  applyInitiativeDateOverrides(strat.initiatives);
   const finance = buildDefaultFinance(projects);
   const accounting = buildDefaultAccounting(projects, finance);
   const hr = buildDefaultHR(projects);
@@ -1596,6 +1697,12 @@ function loadState(){
         const paidRun = raw.hr.payrollRuns.find(r=>r.status==='مصروف');
         if(paidRun) raw.accounting.journalEntries.push(buildPayrollJournalEntry(paidRun, raw.accounting.accounts));
       }
+      if(!raw._planSyncApplied){
+        applyExecutivePlanSync(raw.projects);
+        if(raw.initiatives) applyInitiativeDateOverrides(raw.initiatives);
+        raw._planSyncApplied = true;
+      }
+      enrichProjectsWithScheduleData(raw.projects);
       return raw;
     }
   }catch(e){}
