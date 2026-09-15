@@ -4227,44 +4227,65 @@ function pageDocumentsDashboard(folderId){
   const subfolders = docChildFolders(folder.id);
   const files = docFilesIn(folder.id);
   const empty = !subfolders.length && !files.length;
-
-  const treeHtml = `
-    <div class="doc-tree">
-      <div class="dt-root">🏛️ جامعة الطائف</div>
-      <div class="dt-item ${folder.id==='DOC-MAIN'?'active':''}" onclick="go('documentsDashboard','DOC-MAIN')">📂 إدارة الوثائق</div>
-      ${docChildFolders('DOC-MAIN').map(f=>`<div class="dt-item child ${folder.id===f.id?'active':''}" onclick="go('documentsDashboard','${f.id}')">📁 ${esc(f.name)}</div>`).join('')}
-    </div>`;
+  const mainFolders = docChildFolders('DOC-MAIN');
 
   const rows = [
     ...subfolders.map(f=>`<tr onclick="go('documentsDashboard','${f.id}')" style="cursor:pointer">
-      <td><div class="doc-row-name"><span class="fico">📁</span><b>${esc(f.name)}</b></div></td>
+      <td><div class="docs-row-name"><span class="fico">📁</span><b>${esc(f.name)}</b></div></td>
       <td class="small muted">—</td>
     </tr>`),
     ...files.map(fl=>`<tr onclick="openDocumentViewer('${fl.id}')" style="cursor:pointer">
-      <td><div class="doc-row-name"><span class="fico">📄</span><span>${esc(fl.name)}</span></div></td>
+      <td><div class="docs-row-name"><span class="fico">📄</span><span>${esc(fl.name)}</span></div></td>
       <td class="small muted">${fmtDate(fl.date)}</td>
     </tr>`)
   ].join('');
 
   return `
-  <div class="head"><div><div class="eyebrow">DOCUMENT MANAGEMENT</div><h1>إدارة الوثائق الإلكترونية</h1><p>إدارة الملفات والمرفقات ومحفوظات الجامعة إلكترونياً.</p></div>
-    <div class="actions"><button class="btn ghost" onclick="render()">🔄 تحديث</button></div></div>
-  <div class="two" style="grid-template-columns:1fr 260px">
-    <div>
-      <div class="doc-breadcrumb">${path.map((f,i)=>`<b onclick="go('documentsDashboard','${f.id}')">${esc(f.name)}</b>${i<path.length-1?' &laquo; ':''}`).join('')}</div>
-      <div class="doc-toolbar">
+  <div class="docs-topbar">
+    <div class="docs-tb-avatar">👤</div>
+    <div class="docs-tb-btn"><span class="ico">📄</span>التقارير</div>
+    <div class="docs-tb-btn active"><span class="ico">📊</span>إحصائيات</div>
+    <button class="docs-tb-x" onclick="switchModule('plans')" title="إغلاق">✕</button>
+    <div class="docs-tb-search"><span>🔍</span><input placeholder="… بحث"></div>
+    <div class="docs-tb-title">إدارة الوثائق الإلكترونية</div>
+    <div class="docs-tb-grid" onclick="switchModule('plans')" title="كل الوحدات">⊞</div>
+  </div>
+  <div class="docs-tabbar">
+    <div class="docs-tab-search"><span>🔍</span> … بحث <span style="margin-right:10px">☰</span></div>
+    <div class="docs-tab" onclick="go('documentsDashboard','DOC-HR')">إدارة شؤون الموظفين <span class="x">✕</span></div>
+    <div class="docs-tab active">إدارة الوثائق والمحفوظات</div>
+    <div class="docs-tab" onclick="go('documentsDashboard','DOC-ADV')">طلبات الإدارة المتقدمة <span class="x">✕</span></div>
+    <div class="docs-tab">إحصائيات <span class="x">✕</span></div>
+  </div>
+  <div class="docs-shell">
+    <div class="docs-main">
+      <div class="docs-breadcrumb">${path.map((f,i)=>`${i>0?' &laquo; ':''}<b onclick="go('documentsDashboard','${f.id}')">${esc(f.name)}</b>`).reverse().join('')}</div>
+      <div class="docs-toolbar">
         <select><option>افتراضي</option></select>
-        <button class="btn sm" onclick="openNewDocumentForm('${folder.id}')">+ إنشاء جديد</button>
-        <span class="muted small">إجراءات الملف ▾</span>
+        <div class="docs-new">
+          <span class="docs-link">إجراءات الملف ▾</span>
+          <span style="color:var(--muted);font-size:15px">🕓</span>
+          <button class="docs-newbtn" onclick="openNewDocumentForm('${folder.id}')">إنشاء جديد <span>+</span></button>
+        </div>
       </div>
-      <div class="doc-table-wrap">
-        <table class="doc-table"><thead><tr><th>الاسم</th><th>آخر تعديل</th></tr></thead>
+      <div class="docs-table-wrap">
+        <table class="docs-table"><thead><tr><th>الاسم ↕</th><th>☐ آخر تعديل</th></tr></thead>
         <tbody>${rows}</tbody></table>
-        ${empty?`<div class="doc-empty"><div class="big-ico">🗂️</div><strong>لا توجد عناصر لعرضها</strong><div class="small">لم يتم العثور على أي ملفات أو مجلدات في هذا الموقع.</div></div>`:''}
+        ${empty?`<div class="docs-empty"><div class="folder-outline"></div><strong>لا توجد عناصر لعرضها</strong><div class="small">لم يتم العثور على أي ملفات أو مجلدات في هذا الموقع.</div></div>`:''}
       </div>
-      <div class="doc-bottombar"><span>▦</span><span>🖨️</span><span>📗</span><span onclick="render()" style="cursor:pointer">🔄</span></div>
+      <div class="docs-bottombar"><span>▦</span><span>🖨️</span><span>📗</span><span onclick="render()">🔄</span></div>
     </div>
-    ${treeHtml}
+    <div class="docs-tree-col">
+      <div class="docs-tree-root"><span class="tu-badge">TU</span> جامعة الطائف</div>
+      <div class="docs-tree-item parent" onclick="go('documentsDashboard','DOC-MAIN')">📂 إدارة الوثائق</div>
+      ${mainFolders.map(f=>`<div class="docs-tree-item child ${folder.id===f.id?'active':''}" onclick="go('documentsDashboard','${f.id}')"><span class="fico">📁</span> ${esc(f.name)}</div>`).join('')}
+      <div class="docs-tree-foot">
+        <div class="tu-wordmark">
+          <div class="tu-crest">جامعة الطائف<br><small>TAIF UNIVERSITY</small></div>
+          <div class="tu-box">TU</div>
+        </div>
+      </div>
+    </div>
   </div>`;
 }
 function openNewDocumentForm(folderId){
