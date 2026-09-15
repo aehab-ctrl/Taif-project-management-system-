@@ -4261,20 +4261,20 @@ function pageDocumentsDashboard(folderId){
 
   return `
   <div class="docs-topbar">
-    <div class="docs-tb-avatar">👤</div>
-    <div class="docs-tb-btn"><span class="ico">📄</span>التقارير</div>
-    <div class="docs-tb-btn active"><span class="ico">📊</span>إحصائيات</div>
-    <button class="docs-tb-x" onclick="switchModule('plans')" title="إغلاق">✕</button>
-    <div class="docs-tb-search"><span>🔍</span><input placeholder="… بحث"></div>
-    <div class="docs-tb-title">إدارة الوثائق الإلكترونية</div>
     <div class="docs-tb-grid" onclick="switchModule('plans')" title="كل الوحدات">⊞</div>
+    <div class="docs-tb-title">إدارة الوثائق الإلكترونية</div>
+    <div class="docs-tb-search"><span>🔍</span><input placeholder="… بحث"></div>
+    <button class="docs-tb-x" onclick="switchModule('plans')" title="إغلاق">✕</button>
+    <div class="docs-tb-btn active"><span class="ico">📊</span>إحصائيات</div>
+    <div class="docs-tb-btn"><span class="ico">📄</span>التقارير</div>
+    <select class="docs-tb-user" onchange="docSwitchUser(this.value)" title="تبديل المستخدم لأغراض العرض">${(state.documents.users||[]).map(u=>`<option value="${u.id}" ${u.id===state.documents.currentUserId?'selected':''}>${esc(u.name)}</option>`).join('')}</select>
   </div>
   <div class="docs-tabbar">
     <div class="docs-tab-search"><span>🔍</span> … بحث <span style="margin-right:10px">☰</span></div>
+    <div class="docs-tab" onclick="go('documentsRoles')">🔑 الصلاحيات والأدوار</div>
     <div class="docs-tab" onclick="go('documentsDashboard','DOC-HR')">إدارة شؤون الموظفين <span class="x">✕</span></div>
     <div class="docs-tab active">إدارة الوثائق والمحفوظات</div>
     <div class="docs-tab" onclick="go('documentsDashboard','DOC-ADV')">طلبات الإدارة المتقدمة <span class="x">✕</span></div>
-    <div class="docs-tab">إحصائيات <span class="x">✕</span></div>
   </div>
   <div class="docs-shell">
     <div class="docs-tree-col">
@@ -4292,11 +4292,12 @@ function pageDocumentsDashboard(folderId){
       <div class="docs-breadcrumb">${path.map((f,i)=>`${i>0?' &laquo; ':''}<b onclick="go('documentsDashboard','${f.id}')">${esc(f.name)}</b>`).reverse().join('')}</div>
       <div class="docs-toolbar">
         <select><option>افتراضي</option></select>
-               <div class="docs-new">
+        <div class="docs-new">
           <span class="docs-link">إجراءات الملف ▾</span>
           <span style="color:var(--muted);font-size:15px">🕓</span>
           ${docCan('create') ? `<button class="docs-newbtn" onclick="openNewDocumentForm('${folder.id}')">إنشاء جديد <span>+</span></button>` : `<span class="small muted">🔒 لا تملك صلاحية الإنشاء (${esc(docCurrentRole().name||'')})</span>`}
         </div>
+      </div>
       <div class="docs-table-wrap">
         <table class="docs-table"><thead><tr><th>الاسم ↕</th><th>☐ آخر تعديل</th></tr></thead>
         <tbody>${rows}</tbody></table>
