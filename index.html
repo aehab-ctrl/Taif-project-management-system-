@@ -299,7 +299,7 @@ body.documents-theme main{padding:0;max-width:none}
 [dir="ltr"] .docs-tabbar .docs-tab-search{margin-right:0;margin-left:auto}
 
 /* ===== Documents Module — body: breadcrumb / toolbar / table / tree ===== */
-.docs-shell{display:grid;grid-template-columns:1fr 260px;gap:0;align-items:start}
+.docs-shell{display:grid;grid-template-columns:260px 1fr;gap:0;align-items:start}
 @media(max-width:900px){.docs-shell{grid-template-columns:1fr}}
 .docs-main{padding:22px 26px}
 .docs-breadcrumb{font-size:12px;color:var(--muted);margin-bottom:14px}
@@ -4258,6 +4258,17 @@ function pageDocumentsDashboard(folderId){
     <div class="docs-tab">إحصائيات <span class="x">✕</span></div>
   </div>
   <div class="docs-shell">
+    <div class="docs-tree-col">
+      <div class="docs-tree-root"><span class="tu-badge">TU</span> جامعة الطائف</div>
+      <div class="docs-tree-item parent" onclick="go('documentsDashboard','DOC-MAIN')">📂 إدارة الوثائق</div>
+      ${mainFolders.map(f=>`<div class="docs-tree-item child ${folder.id===f.id?'active':''}" onclick="go('documentsDashboard','${f.id}')"><span class="fico">📁</span> ${esc(f.name)}</div>`).join('')}
+      <div class="docs-tree-foot">
+        <div class="tu-wordmark">
+          <div class="tu-crest">جامعة الطائف<br><small>TAIF UNIVERSITY</small></div>
+          <div class="tu-box">TU</div>
+        </div>
+      </div>
+    </div>
     <div class="docs-main">
       <div class="docs-breadcrumb">${path.map((f,i)=>`${i>0?' &laquo; ':''}<b onclick="go('documentsDashboard','${f.id}')">${esc(f.name)}</b>`).reverse().join('')}</div>
       <div class="docs-toolbar">
@@ -4274,17 +4285,6 @@ function pageDocumentsDashboard(folderId){
         ${empty?`<div class="docs-empty"><div class="folder-outline"></div><strong>لا توجد عناصر لعرضها</strong><div class="small">لم يتم العثور على أي ملفات أو مجلدات في هذا الموقع.</div></div>`:''}
       </div>
       <div class="docs-bottombar"><span>▦</span><span>🖨️</span><span>📗</span><span onclick="render()">🔄</span></div>
-    </div>
-    <div class="docs-tree-col">
-      <div class="docs-tree-root"><span class="tu-badge">TU</span> جامعة الطائف</div>
-      <div class="docs-tree-item parent" onclick="go('documentsDashboard','DOC-MAIN')">📂 إدارة الوثائق</div>
-      ${mainFolders.map(f=>`<div class="docs-tree-item child ${folder.id===f.id?'active':''}" onclick="go('documentsDashboard','${f.id}')"><span class="fico">📁</span> ${esc(f.name)}</div>`).join('')}
-      <div class="docs-tree-foot">
-        <div class="tu-wordmark">
-          <div class="tu-crest">جامعة الطائف<br><small>TAIF UNIVERSITY</small></div>
-          <div class="tu-box">TU</div>
-        </div>
-      </div>
     </div>
   </div>`;
 }
