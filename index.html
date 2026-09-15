@@ -270,46 +270,96 @@ body.sidebar-collapsed .sidebar{width:0;overflow:hidden}
 .rp2-dl-table th{background:var(--primary);color:#fff;padding:8px 7px;text-align:right}
 .rp2-dl-table td{border:1px solid var(--line);padding:8px 7px;vertical-align:middle}
 
-/* ===== Documents Module (إدارة الوثائق الإلكترونية) — نسق بصري مستقل ===== */
-body.documents-theme .topbar{background:linear-gradient(90deg,#0f6b64,#0a4f4a)}
-body.documents-theme .nav-btn.active{background:#e6f5f3;color:#0a4f4a;border-right-color:#12857c}
-[dir="ltr"] body.documents-theme .nav-btn.active{border-left-color:#12857c;border-right:0}
-body.documents-theme .module-btn.active{background:#12857c}
-.doc-toolbar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#fff;border:1px solid var(--line);border-radius:10px 10px 0 0;flex-wrap:wrap}
-.doc-toolbar select{border:1px solid var(--line);border-radius:8px;padding:7px 10px;background:#fff}
-.doc-breadcrumb{font-size:11.5px;color:var(--muted);padding:8px 4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.doc-breadcrumb b{color:#0a4f4a;cursor:pointer}
-.doc-table-wrap{background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;overflow:hidden}
-.doc-table{width:100%;border-collapse:collapse}
-.doc-table th{text-align:right;font-size:11px;color:var(--muted);padding:10px 14px;border-bottom:2px solid var(--line);background:#faf9f6}
-.doc-table td{padding:12px 14px;border-bottom:1px solid #f0ede3;font-size:12.6px}
-.doc-table tr:hover td{background:#f7fbfa}
-.doc-row-name{display:flex;align-items:center;gap:10px}
-.doc-row-name .fico{font-size:18px}
-.doc-empty{padding:60px 20px;text-align:center;color:var(--muted)}
-.doc-empty .big-ico{font-size:46px;opacity:.4;margin-bottom:10px}
-.doc-bottombar{display:flex;gap:14px;padding:10px 14px;background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;font-size:16px;color:#5c655e}
-.doc-tree{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px;align-self:start;position:sticky;top:74px}
-.doc-tree .dt-root{display:flex;align-items:center;gap:8px;padding:8px 10px;font-weight:800;font-size:12.5px;color:#0a4f4a;border-bottom:1px solid var(--line);margin-bottom:6px}
-.doc-tree .dt-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:12px;cursor:pointer;color:#4d5560}
-.doc-tree .dt-item:hover{background:#f5f4ee}
-.doc-tree .dt-item.active{background:#e6f5f3;color:#0a4f4a;font-weight:700}
-.doc-tree .dt-item.child{padding-right:26px;font-size:11.5px}
-[dir="ltr"] .doc-tree .dt-item.child{padding-right:10px;padding-left:26px}
-.doc-viewer{display:grid;grid-template-columns:1fr 320px;gap:0;min-height:420px}
+/* ===== Documents Module — hide the app's generic chrome, use our own ===== */
+body.documents-theme .sidebar,
+body.documents-theme .main-col > .topbar,
+body.documents-theme .breadcrumb-strip{display:none}
+body.documents-theme .shell{grid-template-columns:1fr}
+body.documents-theme main{padding:0;max-width:none}
+
+/* ===== Documents Module — gold topbar ===== */
+.docs-topbar{height:58px;background:var(--topbar-grad);display:flex;align-items:center;gap:10px;padding:0 18px;color:#fff}
+.docs-tb-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+.docs-tb-btn{display:flex;flex-direction:column;align-items:center;gap:3px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);border-radius:9px;padding:6px 14px;font-size:10px;font-weight:700;color:#fff;min-width:58px}
+.docs-tb-btn.active{background:#fff;color:#8a6a1f}
+.docs-tb-btn .ico{font-size:16px}
+.docs-tb-x{background:rgba(0,0,0,.18);border:0;color:#fff;border-radius:8px;width:32px;height:46px;font-size:13px}
+.docs-tb-search{flex:1;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);border-radius:9px;padding:9px 14px;color:#fff;font-size:12.5px;max-width:360px}
+.docs-tb-search input{background:none;border:0;color:#fff;flex:1;outline:none;font-size:12.5px}
+.docs-tb-search input::placeholder{color:rgba(255,255,255,.8)}
+.docs-tb-title{font-weight:800;font-size:16px;flex:1;text-align:right}
+.docs-tb-grid{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);border-radius:9px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+
+/* ===== Documents Module — tab strip ===== */
+.docs-tabbar{display:flex;align-items:center;gap:4px;background:#f3f1ea;border-bottom:1px solid var(--line);padding:0 14px}
+.docs-tabbar .docs-tab{display:flex;align-items:center;gap:9px;padding:13px 16px;font-size:12.5px;color:#5c655e;white-space:nowrap;border-bottom:3px solid transparent;cursor:pointer}
+.docs-tabbar .docs-tab.active{color:#0f6b64;border-bottom-color:#0f6b64;font-weight:700}
+.docs-tabbar .docs-tab .x{opacity:.5;font-size:11px}
+.docs-tabbar .docs-tab-search{margin-right:auto;display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px}
+[dir="ltr"] .docs-tabbar .docs-tab-search{margin-right:0;margin-left:auto}
+
+/* ===== Documents Module — body: breadcrumb / toolbar / table / tree ===== */
+.docs-shell{display:grid;grid-template-columns:1fr 260px;gap:0;align-items:start}
+@media(max-width:900px){.docs-shell{grid-template-columns:1fr}}
+.docs-main{padding:22px 26px}
+.docs-breadcrumb{font-size:12px;color:var(--muted);margin-bottom:14px}
+.docs-breadcrumb b{color:#2f7d45;cursor:pointer;font-weight:800}
+.docs-toolbar{display:flex;align-items:center;gap:16px;padding-bottom:16px;flex-wrap:wrap}
+.docs-toolbar select{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff;min-width:110px}
+.docs-toolbar .docs-new{margin-right:auto;display:flex;align-items:center;gap:16px}
+[dir="ltr"] .docs-toolbar .docs-new{margin-right:0;margin-left:auto}
+.docs-toolbar .docs-link{color:#4d5560;font-weight:700;font-size:12.5px;display:flex;align-items:center;gap:6px}
+.docs-toolbar .docs-newbtn{background:#2f9e6f;color:#fff;border:0;border-radius:8px;padding:9px 14px;font-weight:800;font-size:12.5px;display:flex;align-items:center;gap:8px;cursor:pointer}
+.docs-table-wrap{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.docs-table{width:100%;border-collapse:collapse}
+.docs-table th{background:#faf9f6;text-align:right;font-size:11.5px;color:#4d5560;font-weight:800;padding:12px 16px;border-bottom:1px solid var(--line)}
+.docs-table td{padding:13px 16px;border-bottom:1px solid #f1efe6;font-size:12.6px}
+.docs-table tr:hover td{background:#fbfaf6}
+.docs-row-name{display:flex;align-items:center;gap:10px;cursor:pointer}
+.docs-row-name .fico{font-size:19px}
+.docs-empty{padding:70px 20px;text-align:center;color:#8b93a0}
+.docs-empty .folder-outline{width:64px;height:52px;margin:0 auto 16px;border:3px solid #c7cbc4;border-radius:6px;position:relative}
+.docs-empty .folder-outline::before{content:'';position:absolute;top:-10px;right:6px;width:26px;height:10px;border:3px solid #c7cbc4;border-bottom:0;border-radius:4px 4px 0 0}
+.docs-empty strong{display:block;color:#4d5560;font-size:14px;margin-bottom:6px}
+.docs-bottombar{display:flex;gap:22px;padding:12px 16px;font-size:17px;color:#4d5560}
+.docs-bottombar span{cursor:pointer;opacity:.8}
+.docs-bottombar span:hover{opacity:1}
+
+.docs-tree-col{background:#fff;border-right:1px solid var(--line);min-height:calc(100vh - 145px);padding:16px 12px;display:flex;flex-direction:column}
+[dir="ltr"] .docs-tree-col{border-right:0;border-left:1px solid var(--line)}
+.docs-tree-root{display:flex;align-items:center;gap:8px;padding:8px;font-weight:800;font-size:13px;color:#24302a;margin-bottom:4px}
+.docs-tree-root .tu-badge{background:#0a3b6e;color:#d5b254;font-weight:900;font-size:10px;border-radius:5px;padding:3px 5px}
+.docs-tree-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;font-size:12.5px;color:#3c4249;cursor:pointer}
+.docs-tree-item .fico{font-size:15px}
+.docs-tree-item:hover{background:#f5f4ee}
+.docs-tree-item.parent{font-weight:800;color:#1c2a5e}
+.docs-tree-item.active{background:#e6f5f3;color:#0a4f4a;font-weight:800;position:relative}
+.docs-tree-item.active::before{content:'';position:absolute;right:0;top:6px;bottom:6px;width:3px;background:#12857c;border-radius:2px}
+[dir="ltr"] .docs-tree-item.active::before{right:auto;left:0}
+.docs-tree-item.child{padding-right:24px}
+[dir="ltr"] .docs-tree-item.child{padding-right:10px;padding-left:24px}
+.docs-tree-foot{margin-top:auto;padding-top:26px;text-align:center}
+.docs-tree-foot .tu-wordmark{display:inline-flex;align-items:center;gap:8px}
+.docs-tree-foot .tu-wordmark .tu-crest{font-weight:900;color:#a9862f;font-size:13px;line-height:1.3;text-align:right}
+.docs-tree-foot .tu-wordmark .tu-crest small{display:block;font-size:8px;color:#8b93a0;font-weight:700;letter-spacing:.5px}
+.docs-tree-foot .tu-wordmark .tu-box{background:#a9862f;color:#fff;border-radius:6px;padding:6px 10px;font-size:17px;font-weight:900}
+
+/* ===== Documents Module — file viewer modal (خصائص / أرشيف) ===== */
+.doc-viewer{display:grid;grid-template-columns:1fr 320px;gap:0;min-height:440px}
 @media(max-width:720px){.doc-viewer{grid-template-columns:1fr}}
-.doc-viewer-preview{background:#f4f3ee;border-left:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:10px}
-.doc-viewer-preview .ppage{background:#fff;border:1px solid #ddd;box-shadow:0 4px 14px rgba(0,0,0,.08);width:200px;height:270px;display:flex;align-items:center;justify-content:center;color:#c9c2ac;font-size:40px}
+.doc-viewer-preview{background:#f4f3ee;border-left:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:12px}
+[dir="ltr"] .doc-viewer-preview{border-left:0;border-right:1px solid var(--line)}
+.doc-viewer-preview .ppage{background:#fff;border:1px solid #ddd;box-shadow:0 4px 14px rgba(0,0,0,.08);width:210px;height:280px;display:flex;align-items:center;justify-content:center;color:#c9c2ac;font-size:42px}
 .doc-viewer-tabs{display:flex;gap:0;border-bottom:1px solid var(--line)}
-.doc-viewer-tabs button{flex:1;padding:10px;background:none;border:0;font-weight:700;font-size:12.5px;color:#8b93a0;border-bottom:2px solid transparent;cursor:pointer}
+.doc-viewer-tabs button{flex:1;padding:11px;background:none;border:0;font-weight:700;font-size:12.5px;color:#8b93a0;border-bottom:2px solid transparent;cursor:pointer}
 .doc-viewer-tabs button.active{color:#0a4f4a;border-bottom-color:#12857c}
 .doc-viewer-fields{padding:14px;max-height:420px;overflow:auto}
 .doc-viewer-fields .dvf-row{margin-bottom:10px}
 .doc-viewer-fields label{display:block;font-size:10.5px;color:var(--muted);margin-bottom:3px;font-weight:700}
 .doc-viewer-fields .dvf-val{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12.5px;background:#faf9f6}
-.doc-attach-list{padding:14px;max-height:420px;overflow:auto}
-.doc-attach-row{display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid #f0ede3}
-.doc-attach-row .thumb{width:40px;height:50px;background:#fff;border:1px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#c83b3b;border-radius:3px;flex:none}
+.doc-attach-list{padding:8px 14px;max-height:380px;overflow:auto}
+.doc-attach-row{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid #f0ede3}
+.doc-attach-row .thumb{width:40px;height:50px;background:#fff;border:1px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:800;color:#c83b3b;border-radius:3px;flex:none}
 
 [hidden]{display:none!important}
 
