@@ -270,6 +270,47 @@ body.sidebar-collapsed .sidebar{width:0;overflow:hidden}
 .rp2-dl-table th{background:var(--primary);color:#fff;padding:8px 7px;text-align:right}
 .rp2-dl-table td{border:1px solid var(--line);padding:8px 7px;vertical-align:middle}
 
+/* ===== Documents Module (إدارة الوثائق الإلكترونية) — نسق بصري مستقل ===== */
+body.documents-theme .topbar{background:linear-gradient(90deg,#0f6b64,#0a4f4a)}
+body.documents-theme .nav-btn.active{background:#e6f5f3;color:#0a4f4a;border-right-color:#12857c}
+[dir="ltr"] body.documents-theme .nav-btn.active{border-left-color:#12857c;border-right:0}
+body.documents-theme .module-btn.active{background:#12857c}
+.doc-toolbar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#fff;border:1px solid var(--line);border-radius:10px 10px 0 0;flex-wrap:wrap}
+.doc-toolbar select{border:1px solid var(--line);border-radius:8px;padding:7px 10px;background:#fff}
+.doc-breadcrumb{font-size:11.5px;color:var(--muted);padding:8px 4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.doc-breadcrumb b{color:#0a4f4a;cursor:pointer}
+.doc-table-wrap{background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;overflow:hidden}
+.doc-table{width:100%;border-collapse:collapse}
+.doc-table th{text-align:right;font-size:11px;color:var(--muted);padding:10px 14px;border-bottom:2px solid var(--line);background:#faf9f6}
+.doc-table td{padding:12px 14px;border-bottom:1px solid #f0ede3;font-size:12.6px}
+.doc-table tr:hover td{background:#f7fbfa}
+.doc-row-name{display:flex;align-items:center;gap:10px}
+.doc-row-name .fico{font-size:18px}
+.doc-empty{padding:60px 20px;text-align:center;color:var(--muted)}
+.doc-empty .big-ico{font-size:46px;opacity:.4;margin-bottom:10px}
+.doc-bottombar{display:flex;gap:14px;padding:10px 14px;background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;font-size:16px;color:#5c655e}
+.doc-tree{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px;align-self:start;position:sticky;top:74px}
+.doc-tree .dt-root{display:flex;align-items:center;gap:8px;padding:8px 10px;font-weight:800;font-size:12.5px;color:#0a4f4a;border-bottom:1px solid var(--line);margin-bottom:6px}
+.doc-tree .dt-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:12px;cursor:pointer;color:#4d5560}
+.doc-tree .dt-item:hover{background:#f5f4ee}
+.doc-tree .dt-item.active{background:#e6f5f3;color:#0a4f4a;font-weight:700}
+.doc-tree .dt-item.child{padding-right:26px;font-size:11.5px}
+[dir="ltr"] .doc-tree .dt-item.child{padding-right:10px;padding-left:26px}
+.doc-viewer{display:grid;grid-template-columns:1fr 320px;gap:0;min-height:420px}
+@media(max-width:720px){.doc-viewer{grid-template-columns:1fr}}
+.doc-viewer-preview{background:#f4f3ee;border-left:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:10px}
+.doc-viewer-preview .ppage{background:#fff;border:1px solid #ddd;box-shadow:0 4px 14px rgba(0,0,0,.08);width:200px;height:270px;display:flex;align-items:center;justify-content:center;color:#c9c2ac;font-size:40px}
+.doc-viewer-tabs{display:flex;gap:0;border-bottom:1px solid var(--line)}
+.doc-viewer-tabs button{flex:1;padding:10px;background:none;border:0;font-weight:700;font-size:12.5px;color:#8b93a0;border-bottom:2px solid transparent;cursor:pointer}
+.doc-viewer-tabs button.active{color:#0a4f4a;border-bottom-color:#12857c}
+.doc-viewer-fields{padding:14px;max-height:420px;overflow:auto}
+.doc-viewer-fields .dvf-row{margin-bottom:10px}
+.doc-viewer-fields label{display:block;font-size:10.5px;color:var(--muted);margin-bottom:3px;font-weight:700}
+.doc-viewer-fields .dvf-val{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12.5px;background:#faf9f6}
+.doc-attach-list{padding:14px;max-height:420px;overflow:auto}
+.doc-attach-row{display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid #f0ede3}
+.doc-attach-row .thumb{width:40px;height:50px;background:#fff;border:1px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#c83b3b;border-radius:3px;flex:none}
+
 [hidden]{display:none!important}
 
 /* ===== LTR (English) overrides for chrome elements ===== */
@@ -644,6 +685,7 @@ const MODULES = [
   {id:'finance',    ico:'💰', label:'المالي والمشتريات',        home:'financeDashboard'},
   {id:'accounting', ico:'📒', label:'الرقابي والمحاسبي',        home:'accountingDashboard'},
   {id:'hr',         ico:'👥', label:'الموارد البشرية',          home:'hrDashboard'},
+  {id:'documents',  ico:'🗄️', label:'إدارة الوثائق الإلكترونية', home:'documentsDashboard'},
 ];
 let currentModule = 'plans';
 function switchModule(id){
@@ -702,9 +744,10 @@ function defaultState(){
   applyInitiativeDateOverrides(strat.initiatives);
   const finance = buildDefaultFinance(projects);
   const accounting = buildDefaultAccounting(projects, finance);
-  const hr = buildDefaultHR(projects);
+   const hr = buildDefaultHR(projects);
   const paidRun = hr.payrollRuns.find(r=>r.status==='مصروف');
   if(paidRun) accounting.journalEntries.push(buildPayrollJournalEntry(paidRun, accounting.accounts));
+  const documents = buildDefaultDocuments();
   return {
     org:{ nameAr:'نظام تخطيط الموارد المؤسسية (ERP)', nameEn:'Taif University · Enterprise Resource Planning System', user:'مكتب إدارة المشاريع (PMO)' },
     plan: strat.plan, axes: strat.axes, goals: strat.goals, initiatives: strat.initiatives,
@@ -712,6 +755,7 @@ function defaultState(){
     finance,
     accounting,
     hr,
+    documents,
     notifications: [],
     audit: []
   };
@@ -1692,10 +1736,13 @@ function loadState(){
         const liabHeader = raw.accounting.accounts.find(a=>a.code==='2000');
         raw.accounting.accounts.push({id:uid('ACC'), code:'2030', name:'استقطاعات وموظفين مستحقة', type:'خصوم', parentId: liabHeader?liabHeader.id:'', isPostable:true});
       }
-      if(!raw.hr){
+       if(!raw.hr){
         raw.hr = buildDefaultHR(raw.projects);
         const paidRun = raw.hr.payrollRuns.find(r=>r.status==='مصروف');
         if(paidRun) raw.accounting.journalEntries.push(buildPayrollJournalEntry(paidRun, raw.accounting.accounts));
+      }
+      if(!raw.documents){
+        raw.documents = buildDefaultDocuments();
       }
       if(!raw._planSyncApplied){
         applyExecutivePlanSync(raw.projects);
@@ -1754,6 +1801,7 @@ function renderNav(){
     </div>`;
     return;
   }
+  
   if(currentModule==='accounting'){
     nav.innerHTML = `
     <div class="section-label">الرئيسية</div>
@@ -1791,8 +1839,23 @@ function renderNav(){
     <button class="nav-btn" data-p="__back" onclick="switchModule('plans')"><span class="ico">🧭</span> نظام الخطط والمبادرات</button>
     <button class="nav-btn" data-p="notifications" onclick="go('notifications')"><span class="ico">🔔</span> الإشعارات</button>
     <button class="nav-btn" data-p="settings" onclick="go('settings')"><span class="ico">⚙️</span> الإعدادات</button>
-    <div class="aside-foot">
+        <div class="aside-foot">
       <b>الموارد البشرية — عمادة التعليم الإلكتروني وتقنية المعلومات</b>
+    </div>`;
+    return;
+  }
+  if(currentModule==='documents'){
+    nav.innerHTML = `
+    <div class="section-label">الرئيسية</div>
+    <button class="nav-btn" data-p="documentsDashboard" onclick="go('documentsDashboard','DOC-MAIN')"><span class="ico">🗄️</span> لوحة إدارة الوثائق</button>
+    <div class="section-label">مجلدات النظام</div>
+    ${docChildFolders('DOC-MAIN').map(f=>`<button class="nav-btn" data-p="documentsDashboard" onclick="go('documentsDashboard','${f.id}')"><span class="ico">📁</span> ${esc(f.name)}</button>`).join('')}
+    <div class="section-label">النظام</div>
+    <button class="nav-btn" data-p="__back" onclick="switchModule('plans')"><span class="ico">🧭</span> نظام الخطط والمبادرات</button>
+    <button class="nav-btn" data-p="notifications" onclick="go('notifications')"><span class="ico">🔔</span> الإشعارات</button>
+    <button class="nav-btn" data-p="settings" onclick="go('settings')"><span class="ico">⚙️</span> الإعدادات</button>
+    <div class="aside-foot">
+      <b>إدارة الوثائق الإلكترونية — جامعة الطائف</b>
     </div>`;
     return;
   }
@@ -2638,9 +2701,10 @@ function pagePurchaseRequests(){
     <td class="small">${fmtDate(pr.date)}</td>
     <td>${fmtMoney(prTotal(pr))}</td>
     <td><select onchange="submitPrStatus('${pr.id}', this.value)">${PR_STATUSES.map(s=>`<option ${pr.status===s?'selected':''}>${s}</option>`).join('')}</select></td>
-    <td>
+   <td>
       ${pr.status==='معتمد' ? `<button class="btn sm" onclick="openPoForm('${pr.id}')">إنشاء أمر شراء</button>` : ''}
       <button class="btn sm ghost" onclick="openPrForm('${pr.id}')">تعديل</button>
+      <button class="btn sm ghost" onclick="sendPRToDocuments('${pr.id}')" title="إرسال لإدارة الوثائق">📤</button>
     </td>
   </tr>`}).join('') || `<tr><td colspan="7"><div class="empty">لا توجد طلبات شراء بعد.</div></td></tr>`}</tbody></table></div></div>`;
 }
@@ -2648,10 +2712,11 @@ function pagePurchaseRequestDetail(id){
   const pr = prById(id);
   if(!pr) return `<div class="empty"><strong>الطلب غير موجود</strong></div>`;
   const p = projectById(pr.projectId);
-  return head(esc(pr.code), 'طلب شراء', p?p.nameAr:'', `
+    return head(esc(pr.code), 'طلب شراء', p?p.nameAr:'', `
       <button class="btn ghost" onclick="go('purchaseRequests')">← العودة للطلبات</button>
       <button class="btn secondary" onclick="openPrForm('${pr.id}')">تعديل</button>
       ${pr.status==='معتمد'?`<button class="btn" onclick="openPoForm('${pr.id}')">إنشاء أمر شراء</button>`:''}
+      <button class="btn ghost" onclick="sendPRToDocuments('${pr.id}')">📤 إرسال لإدارة الوثائق</button>
       <button class="btn danger" onclick="deletePR('${pr.id}')">حذف</button>
     `) +
   `<div class="two">
@@ -2688,9 +2753,10 @@ function pagePurchaseOrders(){
     <td>${fmtMoney(total)}</td>
     <td>${fmtMoney(paid)}</td>
     <td><select onchange="setPoStatus('${po.id}', this.value)">${PO_STATUSES.map(s=>`<option ${po.status===s?'selected':''}>${s}</option>`).join('')}</select></td>
-    <td>
+        <td>
       ${paid<total && po.status!=='ملغى' ? `<button class="btn sm" onclick="openPaymentForm(null,'${po.id}')">أمر صرف</button>` : ''}
       <button class="btn sm ghost" onclick="go('purchaseOrderDetail','${po.id}')">فتح</button>
+      <button class="btn sm ghost" onclick="sendPOToDocuments('${po.id}')" title="إرسال لإدارة الوثائق">📤</button>
     </td>
   </tr>`}).join('') || `<tr><td colspan="7"><div class="empty">لا توجد أوامر شراء بعد.</div></td></tr>`}</tbody></table></div></div>`;
 }
@@ -2700,10 +2766,11 @@ function pagePurchaseOrderDetail(id){
   const v = vendorById(po.vendorId); const p = projectById(po.projectId); const c = contractById(po.contractId);
   const paid = poPaidAmount(po.id); const total = poTotal(po);
   const payments = state.finance.paymentOrders.filter(pay=>pay.poId===po.id);
-  return head(esc(po.code), 'أمر شراء', v?v.name:'', `
+    return head(esc(po.code), 'أمر شراء', v?v.name:'', `
       <button class="btn ghost" onclick="go('purchaseOrders')">← العودة لأوامر الشراء</button>
       <button class="btn secondary" onclick="openPoForm(null,'${po.id}')">تعديل</button>
       <button class="btn" onclick="openPaymentForm(null,'${po.id}')">+ أمر صرف</button>
+      <button class="btn ghost" onclick="sendPOToDocuments('${po.id}')">📤 إرسال لإدارة الوثائق</button>
       <button class="btn danger" onclick="deletePo('${po.id}')">حذف</button>
     `) +
   `<div class="two">
@@ -4056,7 +4123,195 @@ function pageHRDashboard(){
     </section>
   </div>`;
 }
+/* ================= DOCUMENTS MODULE (إدارة الوثائق الإلكترونية) ================= */
+function buildDefaultDocuments(){
+  const F = (id,name,parentId)=>({id, name, parentId});
+  const folders = [
+    F('DOCROOT','جامعة الطائف', null),
+    F('DOC-MAIN','إدارة الوثائق', 'DOCROOT'),
+    F('DOC-ADV','طلبات الإدارة المتقدمة', 'DOC-MAIN'),
+    F('DOC-COMM','المراسلات والاتصالات', 'DOC-MAIN'),
+    F('DOC-ARCH','إدارة الوثائق والمحفوظات', 'DOC-MAIN'),
+    F('DOC-ARCH-DELIV','مخرجات المشاريع', 'DOC-ARCH'),
+    F('DOC-ARCH-PROC','المشتريات والعقود', 'DOC-ARCH'),
+    F('DOC-MGMT','المديريات الإدارية', 'DOC-MAIN'),
+    F('DOC-COMMITTEES','اللجان', 'DOC-MAIN'),
+    F('DOC-STORE','المستودعات', 'DOC-MAIN'),
+    F('DOC-HR','إدارة شؤون الموظفين', 'DOC-MAIN'),
+    F('DOC-FIN','الإدارة المالية', 'DOC-MAIN'),
+  ];
+  return { folders, files: [] };
+}
+function docFolderById(id){ return (state.documents.folders||[]).find(f=>f.id===id); }
+function docChildFolders(parentId){ return (state.documents.folders||[]).filter(f=>f.parentId===parentId); }
+function docFilesIn(folderId){ return (state.documents.files||[]).filter(f=>f.folderId===folderId).sort((a,b)=>(b.date||'').localeCompare(a.date||'')); }
+function docFileById(id){ return (state.documents.files||[]).find(f=>f.id===id); }
+function docPathTo(id){
+  const path=[]; let cur = docFolderById(id);
+  while(cur){ path.unshift(cur); cur = cur.parentId?docFolderById(cur.parentId):null; }
+  return path;
+}
+function addDocumentFile(folderId, name, meta){
+  meta = meta||{};
+  const file = {
+    id: uid('DOC'), folderId, name, date: today(),
+    kind: meta.kind || 'ملف',
+    sourceType: meta.sourceType || '', sourceId: meta.sourceId || '',
+    idNumber: meta.idNumber || 'DOC-'+Math.floor(1000+Math.random()*9000),
+    ownerName: meta.ownerName || state.org.user,
+    fileNumber: meta.fileNumber || String(4000000+Math.floor(Math.random()*900000)),
+    classification: meta.classification || 'قسم المعاملات',
+    location: meta.location || String(Math.floor(1+Math.random()*30)),
+    attachments: meta.attachments || [{id:uid('ATT'), name:'pdf.'+Math.floor(10000+Math.random()*90000)}],
+    body: meta.body || ''
+  };
+  state.documents.files.unshift(file);
+  save();
+  return file;
+}
 
+function pageDocumentsDashboard(folderId){
+  folderId = (folderId && docFolderById(folderId)) ? folderId : 'DOC-MAIN';
+  const folder = docFolderById(folderId);
+  const path = docPathTo(folder.id);
+  const subfolders = docChildFolders(folder.id);
+  const files = docFilesIn(folder.id);
+  const empty = !subfolders.length && !files.length;
+
+  const treeHtml = `
+    <div class="doc-tree">
+      <div class="dt-root">🏛️ جامعة الطائف</div>
+      <div class="dt-item ${folder.id==='DOC-MAIN'?'active':''}" onclick="go('documentsDashboard','DOC-MAIN')">📂 إدارة الوثائق</div>
+      ${docChildFolders('DOC-MAIN').map(f=>`<div class="dt-item child ${folder.id===f.id?'active':''}" onclick="go('documentsDashboard','${f.id}')">📁 ${esc(f.name)}</div>`).join('')}
+    </div>`;
+
+  const rows = [
+    ...subfolders.map(f=>`<tr onclick="go('documentsDashboard','${f.id}')" style="cursor:pointer">
+      <td><div class="doc-row-name"><span class="fico">📁</span><b>${esc(f.name)}</b></div></td>
+      <td class="small muted">—</td>
+    </tr>`),
+    ...files.map(fl=>`<tr onclick="openDocumentViewer('${fl.id}')" style="cursor:pointer">
+      <td><div class="doc-row-name"><span class="fico">📄</span><span>${esc(fl.name)}</span></div></td>
+      <td class="small muted">${fmtDate(fl.date)}</td>
+    </tr>`)
+  ].join('');
+
+  return `
+  <div class="head"><div><div class="eyebrow">DOCUMENT MANAGEMENT</div><h1>إدارة الوثائق الإلكترونية</h1><p>إدارة الملفات والمرفقات ومحفوظات الجامعة إلكترونياً.</p></div>
+    <div class="actions"><button class="btn ghost" onclick="render()">🔄 تحديث</button></div></div>
+  <div class="two" style="grid-template-columns:1fr 260px">
+    <div>
+      <div class="doc-breadcrumb">${path.map((f,i)=>`<b onclick="go('documentsDashboard','${f.id}')">${esc(f.name)}</b>${i<path.length-1?' &laquo; ':''}`).join('')}</div>
+      <div class="doc-toolbar">
+        <select><option>افتراضي</option></select>
+        <button class="btn sm" onclick="openNewDocumentForm('${folder.id}')">+ إنشاء جديد</button>
+        <span class="muted small">إجراءات الملف ▾</span>
+      </div>
+      <div class="doc-table-wrap">
+        <table class="doc-table"><thead><tr><th>الاسم</th><th>آخر تعديل</th></tr></thead>
+        <tbody>${rows}</tbody></table>
+        ${empty?`<div class="doc-empty"><div class="big-ico">🗂️</div><strong>لا توجد عناصر لعرضها</strong><div class="small">لم يتم العثور على أي ملفات أو مجلدات في هذا الموقع.</div></div>`:''}
+      </div>
+      <div class="doc-bottombar"><span>▦</span><span>🖨️</span><span>📗</span><span onclick="render()" style="cursor:pointer">🔄</span></div>
+    </div>
+    ${treeHtml}
+  </div>`;
+}
+function openNewDocumentForm(folderId){
+  showModal('إنشاء ملف جديد', `
+  <form onsubmit="submitNewDocument(event,'${folderId}')">
+    <div class="form-grid">
+      <div class="field full"><label>اسم الملف *</label><input name="name" required></div>
+      <div class="field"><label>تصنيف المعاملة</label><input name="classification" value="قسم المعاملات"></div>
+    </div>
+    <div class="form-actions"><button class="btn">حفظ</button><button type="button" class="btn ghost" onclick="closeModal()">إلغاء</button></div>
+  </form>`);
+}
+function submitNewDocument(e, folderId){
+  e.preventDefault();
+  const f = new FormData(e.target);
+  addDocumentFile(folderId, f.get('name'), {classification:f.get('classification')});
+  closeModal(); toast('تم إنشاء الملف'); render();
+}
+function openDocumentViewer(fileId){
+  const file = docFileById(fileId);
+  if(!file) return;
+  const folder = docFolderById(file.folderId);
+  showModal(file.name, `
+  <div class="doc-viewer">
+    <div class="doc-viewer-preview">
+      <div class="ppage">📄</div>
+      <div class="small muted">معاينة الملف غير متاحة — عرض البيانات الوصفية فقط</div>
+    </div>
+    <div>
+      <div class="doc-viewer-tabs">
+        <button class="active" onclick="switchDocTab(this,'props')">خصائص</button>
+        <button onclick="switchDocTab(this,'archive')">أرشيف</button>
+      </div>
+      <div id="docTabProps" class="doc-viewer-fields">
+        <div class="dvf-row"><label>رقم التعريف</label><div class="dvf-val">${esc(file.idNumber)}</div></div>
+        <div class="dvf-row"><label>الاسم</label><div class="dvf-val">${esc(file.name)}</div></div>
+        <div class="dvf-row"><label>الجهة / المسؤول</label><div class="dvf-val">${esc(file.ownerName)}</div></div>
+        <div class="dvf-row"><label>رقم الملف</label><div class="dvf-val">${esc(file.fileNumber)}</div></div>
+        <div class="dvf-row"><label>تصنيف المعاملة</label><div class="dvf-val">${esc(file.classification)}</div></div>
+        <div class="dvf-row"><label>موقع الملف</label><div class="dvf-val">${esc(file.location)}</div></div>
+        <div class="dvf-row"><label>المجلد</label><div class="dvf-val">${esc(folder?folder.name:'')}</div></div>
+        <div class="dvf-row"><label>تاريخ الإضافة</label><div class="dvf-val">${fmtDate(file.date)}</div></div>
+        ${file.body?`<div class="dvf-row"><label>ملاحظات</label><div class="dvf-val" style="white-space:pre-line">${esc(file.body)}</div></div>`:''}
+      </div>
+      <div id="docTabArchive" class="doc-attach-list" hidden>
+        ${(file.attachments||[]).map(a=>`<div class="doc-attach-row"><div class="thumb">PDF</div><div><b class="small">${esc(a.name)}</b></div></div>`).join('') || '<div class="empty">لا توجد مرفقات</div>'}
+      </div>
+    </div>
+  </div>`);
+}
+function switchDocTab(btn, tab){
+  btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('docTabProps').hidden = tab!=='props';
+  document.getElementById('docTabArchive').hidden = tab!=='archive';
+}
+
+/* ---- Send-to-Documents bridges (from Project Deliverables & Finance PR/PO) ---- */
+function sendDeliverablesToDocuments(projectId){
+  const p = projectById(projectId); if(!p) return;
+  const ms = fallbackMilestones(p);
+  const deliverables = fallbackDeliverables(p, ms);
+  const body = deliverables.map((d,i)=>`${i+1}. ${d.title} — الاستحقاق: ${fmtDate(d.due)} — الحالة: ${d.received}`).join('\n');
+  addDocumentFile('DOC-ARCH-DELIV', `مخرجات مشروع — ${p.nameAr}`, {
+    sourceType:'project-deliverables', sourceId:p.id, classification:'مخرجات مشاريع',
+    ownerName:reportManager(p), body,
+    attachments:[{id:uid('ATT'), name:`Deliverables-${p.code}.pdf`}]
+  });
+  toast('تم إرسال مخرجات المشروع إلى إدارة الوثائق الإلكترونية');
+  notify('إرسال مخرجات مشروع', `تم أرشفة مخرجات مشروع "${p.nameAr}" في إدارة الوثائق الإلكترونية.`);
+}
+function sendPRToDocuments(prId){
+  const pr = prById(prId); if(!pr) return;
+  const p = projectById(pr.projectId);
+  const body = pr.items.map((it,i)=>`${i+1}. ${it.description} — الكمية: ${it.qty} — سعر الوحدة: ${fmtMoney(it.unitPrice)}`).join('\n');
+  addDocumentFile('DOC-ARCH-PROC', `طلب شراء — ${pr.code}`, {
+    sourceType:'purchase-request', sourceId:pr.id, classification:'طلبات شراء',
+    ownerName:pr.requestedBy||'', body,
+    attachments:[{id:uid('ATT'), name:`${pr.code}.pdf`}]
+  });
+  toast('تم إرسال طلب الشراء إلى إدارة الوثائق الإلكترونية');
+  notify('إرسال طلب شراء', `تم أرشفة طلب الشراء "${pr.code}"${p?' الخاص بمشروع '+p.nameAr:''} في إدارة الوثائق الإلكترونية.`);
+}
+function sendPOToDocuments(poId){
+  const po = poById(poId); if(!po) return;
+  const v = vendorById(po.vendorId);
+  const body = po.items.map((it,i)=>`${i+1}. ${it.description} — الكمية: ${it.qty} — سعر الوحدة: ${fmtMoney(it.unitPrice)}`).join('\n');
+  addDocumentFile('DOC-ARCH-PROC', `أمر شراء — ${po.code}`, {
+    sourceType:'purchase-order', sourceId:po.id, classification:'أوامر شراء',
+    ownerName:v?v.name:'', body,
+    attachments:[{id:uid('ATT'), name:`${po.code}.pdf`}]
+  });
+  toast('تم إرسال أمر الشراء إلى إدارة الوثائق الإلكترونية');
+  notify('إرسال أمر شراء', `تم أرشفة أمر الشراء "${po.code}" في إدارة الوثائق الإلكترونية.`);
+}
+
+/* ================= PLAN DASHBOARD (ERP · PLANS & INITIATIVES MODULE HOME) ================= */
 /* ================= PLAN DASHBOARD (ERP · PLANS & INITIATIVES MODULE HOME) ================= */
 function pagePlanDashboard(){
   const pl = planStats();
@@ -4643,10 +4898,11 @@ function pageProjectReport(id){
   const p = projectById(id);
   if(!p) return `<div class="empty"><strong>${t('المشروع غير موجود')}</strong></div>`;
   const st = overallStatus(p);
-  return head(esc(p.code), t('معاينة التقرير')+' — ' + p.nameAr, t('تقرير حالة تنفيذي من 3 صفحات (ملخص تنفيذي، جدول زمني، مخرجات) بجميع الحقول معبأة تلقائياً. نزّله كملف Word جاهز للتعديل، أو اطبعه مباشرة.'),
+    return head(esc(p.code), t('معاينة التقرير')+' — ' + p.nameAr, t('تقرير حالة تنفيذي من 3 صفحات (ملخص تنفيذي، جدول زمني، مخرجات) بجميع الحقول معبأة تلقائياً. نزّله كملف Word جاهز للتعديل، أو اطبعه مباشرة.'),
     `<button class="btn ghost" onclick="go('projectDetail','${p.id}')">← ${t('العودة للمشروع')}</button>
      <button class="btn" onclick="downloadReportWord('${p.id}')">⬇️ ${t('تنزيل Word (قابل للتعديل)')}</button>
      <button class="btn secondary" onclick="printProjectReport('${p.id}')">🖨️ ${t('طباعة / PDF')}</button>
+     <button class="btn secondary" onclick="sendDeliverablesToDocuments('${p.id}')">📤 إرسال المخرجات لإدارة الوثائق</button>
      <button class="btn ghost" onclick="logReportIssued('${p.id}')">${t('تسجيل إصدار التقرير')}</button>`) +
   `<div class="card" style="padding:0;overflow:hidden">
     <div style="padding:28px" id="reportPreview">${buildReportHtml(p)}</div>
@@ -5595,6 +5851,7 @@ function toast(msg){
 
 /* ================= ROUTER / RENDER ================= */
 function render(){
+  document.body.classList.toggle('documents-theme', currentModule==='documents');
   renderModuleBar();
   renderNav();
   const topbarTitleEl = document.getElementById('topbarTitle');
@@ -5606,7 +5863,7 @@ function render(){
   }
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active', b.dataset.p===currentPage || (currentPage.startsWith('project') && b.dataset.p==='projects') || (currentPage.startsWith('initiative') && b.dataset.p==='initiatives') || (currentPage.startsWith('purchaseRequest') && b.dataset.p==='purchaseRequests') || (currentPage.startsWith('purchaseOrder') && b.dataset.p==='purchaseOrders') || (currentPage.startsWith('contract') && b.dataset.p==='contracts') || (currentPage.startsWith('vendor') && b.dataset.p==='vendors') || (currentPage.startsWith('paymentOrder') && b.dataset.p==='paymentOrders') || (currentPage.startsWith('journalEntry') && b.dataset.p==='journalEntries') || (currentPage.startsWith('account') && b.dataset.p==='accounts') || (currentPage.startsWith('reconciliation') && b.dataset.p==='bankReconciliation') || (currentPage.startsWith('auditFinding') && b.dataset.p==='auditFindings') || (currentPage.startsWith('employee') && b.dataset.p==='employees') || (currentPage.startsWith('payrollRun') && b.dataset.p==='payrollRuns') ));
   let html = '';
-  if(currentModule==='hr'){
+   if(currentModule==='hr'){
     if(currentPage==='hrDashboard') html = pageHRDashboard();
     else if(currentPage==='employees') html = pageEmployees();
     else if(currentPage==='employeeDetail') html = pageEmployeeDetail(currentProjectId);
@@ -5617,6 +5874,12 @@ function render(){
     else if(currentPage==='notifications') html = pageNotifications();
     else if(currentPage==='settings') html = pageSettings();
     else html = pageHRDashboard();
+  }
+  else if(currentModule==='documents'){
+    if(currentPage==='documentsDashboard') html = pageDocumentsDashboard(currentProjectId);
+    else if(currentPage==='notifications') html = pageNotifications();
+    else if(currentPage==='settings') html = pageSettings();
+    else html = pageDocumentsDashboard('DOC-MAIN');
   }
   else if(currentModule==='accounting'){
     if(currentPage==='accountingDashboard') html = pageAccountingDashboard();
