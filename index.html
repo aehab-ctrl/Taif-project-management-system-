@@ -4421,7 +4421,6 @@ function pageDocumentsRoles(){
   const users = state.documents.users||[];
   const permLabels = {view:'عرض', create:'إنشاء', edit:'تعديل', delete:'حذف', download:'تنزيل', manageRoles:'إدارة الأدوار'};
   const canManage = docCan('manageRoles');
-  return `
     return `
   <div class="docs-topbar">
     <div class="docs-tb-grid" onclick="switchModule('plans')" title="كل الوحدات">⊞</div>
