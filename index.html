@@ -289,7 +289,8 @@ body.documents-theme main{padding:0;max-width:none}
 .docs-tb-search input::placeholder{color:rgba(255,255,255,.8)}
 .docs-tb-title{font-weight:800;font-size:16px;flex:1;text-align:right}
 .docs-tb-grid{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);border-radius:9px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
-
+.docs-tb-user{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);border-radius:9px;padding:8px 10px;color:#fff;font-size:11.5px;font-weight:700;max-width:210px}
+.docs-tb-user option{color:#222}
 /* ===== Documents Module — tab strip ===== */
 .docs-tabbar{display:flex;align-items:center;gap:4px;background:#f3f1ea;border-bottom:1px solid var(--line);padding:0 14px}
 .docs-tabbar .docs-tab{display:flex;align-items:center;gap:9px;padding:13px 16px;font-size:12.5px;color:#5c655e;white-space:nowrap;border-bottom:3px solid transparent;cursor:pointer}
@@ -1791,8 +1792,14 @@ function loadState(){
         const paidRun = raw.hr.payrollRuns.find(r=>r.status==='مصروف');
         if(paidRun) raw.accounting.journalEntries.push(buildPayrollJournalEntry(paidRun, raw.accounting.accounts));
       }
-      if(!raw.documents){
+          if(!raw.documents){
         raw.documents = buildDefaultDocuments();
+      }
+      if(raw.documents && !raw.documents.roles){
+        const d = buildDefaultDocuments();
+        raw.documents.roles = d.roles;
+        raw.documents.users = d.users;
+        raw.documents.currentUserId = raw.documents.currentUserId || 'USR-1';
       }
       if(!raw._planSyncApplied){
         applyExecutivePlanSync(raw.projects);
@@ -4190,7 +4197,19 @@ function buildDefaultDocuments(){
     F('DOC-HR','إدارة شؤون الموظفين', 'DOC-MAIN'),
     F('DOC-FIN','الإدارة المالية', 'DOC-MAIN'),
   ];
-  return { folders, files: [] };
+  const roles = [
+    {id:'ROLE-ADMIN', name:'مدير النظام', description:'صلاحية كاملة على جميع المجلدات والملفات وإدارة الأدوار.', permissions:{view:true, create:true, edit:true, delete:true, download:true, manageRoles:true}},
+    {id:'ROLE-ARCHIVE', name:'مسؤول الأرشيف', description:'إدارة كاملة للملفات والمجلدات دون صلاحية إدارة الأدوار نفسها.', permissions:{view:true, create:true, edit:true, delete:true, download:true, manageRoles:false}},
+    {id:'ROLE-EDITOR', name:'محرر / مدخل بيانات', description:'يمكنه إنشاء الملفات وتعديلها، دون حذفها.', permissions:{view:true, create:true, edit:true, delete:false, download:true, manageRoles:false}},
+    {id:'ROLE-VIEWER', name:'مشاهد فقط', description:'اطلاع وتنزيل فقط، دون أي تعديل.', permissions:{view:true, create:false, edit:false, delete:false, download:true, manageRoles:false}},
+  ];
+  const users = [
+    {id:'USR-1', name:'Administrator', roleId:'ROLE-ADMIN'},
+    {id:'USR-2', name:'أمين الأرشيف', roleId:'ROLE-ARCHIVE'},
+    {id:'USR-3', name:'موظف إدخال بيانات', roleId:'ROLE-EDITOR'},
+    {id:'USR-4', name:'مستخدم اطلاع', roleId:'ROLE-VIEWER'},
+  ];
+  return { folders, files: [], roles, users, currentUserId:'USR-1' };
 }
 function docFolderById(id){ return (state.documents.folders||[]).find(f=>f.id===id); }
 function docChildFolders(parentId){ return (state.documents.folders||[]).filter(f=>f.parentId===parentId); }
@@ -4273,12 +4292,11 @@ function pageDocumentsDashboard(folderId){
       <div class="docs-breadcrumb">${path.map((f,i)=>`${i>0?' &laquo; ':''}<b onclick="go('documentsDashboard','${f.id}')">${esc(f.name)}</b>`).reverse().join('')}</div>
       <div class="docs-toolbar">
         <select><option>افتراضي</option></select>
-        <div class="docs-new">
+               <div class="docs-new">
           <span class="docs-link">إجراءات الملف ▾</span>
           <span style="color:var(--muted);font-size:15px">🕓</span>
-          <button class="docs-newbtn" onclick="openNewDocumentForm('${folder.id}')">إنشاء جديد <span>+</span></button>
+          ${docCan('create') ? `<button class="docs-newbtn" onclick="openNewDocumentForm('${folder.id}')">إنشاء جديد <span>+</span></button>` : `<span class="small muted">🔒 لا تملك صلاحية الإنشاء (${esc(docCurrentRole().name||'')})</span>`}
         </div>
-      </div>
       <div class="docs-table-wrap">
         <table class="docs-table"><thead><tr><th>الاسم ↕</th><th>☐ آخر تعديل</th></tr></thead>
         <tbody>${rows}</tbody></table>
@@ -4289,8 +4307,8 @@ function pageDocumentsDashboard(folderId){
   </div>`;
 }
 function openNewDocumentForm(folderId){
-  showModal('إنشاء ملف جديد', `
-  <form onsubmit="submitNewDocument(event,'${folderId}')">
+  if(!docCan('create')){ toast('لا تملك صلاحية إنشاء ملفات جديدة'); return; }
+  showModal('إنشاء ملف جديد', `  <form onsubmit="submitNewDocument(event,'${folderId}')">
     <div class="form-grid">
       <div class="field full"><label>اسم الملف *</label><input name="name" required></div>
       <div class="field"><label>تصنيف المعاملة</label><input name="classification" value="قسم المعاملات"></div>
@@ -4330,9 +4348,10 @@ function openDocumentViewer(fileId){
         <div class="dvf-row"><label>تاريخ الإضافة</label><div class="dvf-val">${fmtDate(file.date)}</div></div>
         ${file.body?`<div class="dvf-row"><label>ملاحظات</label><div class="dvf-val" style="white-space:pre-line">${esc(file.body)}</div></div>`:''}
       </div>
-      <div id="docTabArchive" class="doc-attach-list" hidden>
+                <div id="docTabArchive" class="doc-attach-list" hidden>
         ${(file.attachments||[]).map(a=>`<div class="doc-attach-row"><div class="thumb">PDF</div><div><b class="small">${esc(a.name)}</b></div></div>`).join('') || '<div class="empty">لا توجد مرفقات</div>'}
       </div>
+      ${docCan('delete') ? `<div style="padding:10px 14px;border-top:1px solid var(--line)"><button class="btn sm danger" onclick="deleteDocumentFile('${file.id}')">🗑️ حذف الملف</button></div>` : ''}
     </div>
   </div>`);
 }
@@ -4382,6 +4401,105 @@ function sendPOToDocuments(poId){
   notify('إرسال أمر شراء', `تم أرشفة أمر الشراء "${po.code}" في إدارة الوثائق الإلكترونية.`);
 }
 
+/* ---- Documents: Roles & Permissions ---- */
+function docCurrentUser(){ return (state.documents.users||[]).find(u=>u.id===state.documents.currentUserId) || (state.documents.users||[])[0]; }
+function docCurrentRole(){ const u = docCurrentUser(); return (state.documents.roles||[]).find(r=>r.id===(u&&u.roleId)) || {permissions:{}}; }
+function docCan(perm){ return !!(docCurrentRole().permissions||{})[perm]; }
+function docRoleById(id){ return (state.documents.roles||[]).find(r=>r.id===id); }
+function docSwitchUser(userId){
+  state.documents.currentUserId = userId;
+  save(); toast('تم تبديل المستخدم الحالي — الصلاحيات مطبّقة الآن حسب دوره'); render();
+}
+function deleteDocumentFile(fileId){
+  if(!docCan('delete')){ toast('لا تملك صلاحية حذف الملفات'); return; }
+  if(!confirm('هل تريد حذف هذا الملف؟')) return;
+  state.documents.files = state.documents.files.filter(f=>f.id!==fileId);
+  save(); closeModal(); toast('تم حذف الملف'); render();
+}
+function pageDocumentsRoles(){
+  const roles = state.documents.roles||[];
+  const users = state.documents.users||[];
+  const permLabels = {view:'عرض', create:'إنشاء', edit:'تعديل', delete:'حذف', download:'تنزيل', manageRoles:'إدارة الأدوار'};
+  const canManage = docCan('manageRoles');
+  return `
+    return `
+  <div class="docs-topbar">
+    <div class="docs-tb-grid" onclick="switchModule('plans')" title="كل الوحدات">⊞</div>
+    <div class="docs-tb-title">إدارة الوثائق الإلكترونية</div>
+    <div class="docs-tb-search"><span>🔍</span><input placeholder="… بحث"></div>
+    <button class="docs-tb-x" onclick="switchModule('plans')" title="إغلاق">✕</button>
+    <div class="docs-tb-btn active"><span class="ico">📊</span>إحصائيات</div>
+    <div class="docs-tb-btn"><span class="ico">📄</span>التقارير</div>
+    <select class="docs-tb-user" onchange="docSwitchUser(this.value)" title="تبديل المستخدم لأغراض العرض">${(state.documents.users||[]).map(u=>`<option value="${u.id}" ${u.id===state.documents.currentUserId?'selected':''}>${esc(u.name)}</option>`).join('')}</select>
+  </div>
+  <div class="docs-tabbar">
+    <div class="docs-tab-search"><span>🔍</span> … بحث <span style="margin-right:10px">☰</span></div>
+    <div class="docs-tab" onclick="go('documentsRoles')">🔑 الصلاحيات والأدوار</div>
+    <div class="docs-tab" onclick="go('documentsDashboard','DOC-HR')">إدارة شؤون الموظفين <span class="x">✕</span></div>
+    <div class="docs-tab active">إدارة الوثائق والمحفوظات</div>
+    <div class="docs-tab" onclick="go('documentsDashboard','DOC-ADV')">طلبات الإدارة المتقدمة <span class="x">✕</span></div>
+  </div>
+  <div class="docs-shell" style="grid-template-columns:1fr">
+    <div class="docs-main">
+      <div class="docs-breadcrumb"><b onclick="go('documentsDashboard','DOC-MAIN')">إدارة الوثائق</b> &laquo; <b>الصلاحيات والأدوار</b></div>
+      ${!canManage?`<div class="notice"><strong>عرض فقط</strong>المستخدم الحالي (${esc(docCurrentUser()?.name||'')}) لا يملك صلاحية "إدارة الأدوار"، لذا لا يمكنه تعديل هذه الشاشة.</div>`:''}
+      <div class="docs-table-wrap" style="margin-bottom:20px">
+        <table class="docs-table"><thead><tr><th>الدور</th>${Object.values(permLabels).map(l=>`<th style="text-align:center">${l}</th>`).join('')}<th></th></tr></thead>
+        <tbody>${roles.map(r=>`<tr>
+          <td><b>${esc(r.name)}</b><div class="small muted">${esc(r.description||'')}</div></td>
+          ${Object.keys(permLabels).map(k=>`<td style="text-align:center"><input type="checkbox" ${r.permissions[k]?'checked':''} ${canManage?'':'disabled'} onchange="updateRolePermission('${r.id}','${k}',this.checked)"></td>`).join('')}
+          <td>${canManage?`<button class="btn sm danger" onclick="deleteDocRole('${r.id}')">حذف</button>`:''}</td>
+        </tr>`).join('')}</tbody></table>
+      </div>
+      ${canManage?`<button class="btn secondary" onclick="openNewRoleForm()" style="margin-bottom:20px">+ إضافة دور جديد</button>`:''}
+      <div class="docs-table-wrap">
+        <table class="docs-table"><thead><tr><th>المستخدم</th><th>الدور الحالي</th><th></th></tr></thead>
+        <tbody>${users.map(u=>`<tr>
+          <td><b>${esc(u.name)}</b></td>
+          <td>${canManage?`<select onchange="assignUserRole('${u.id}',this.value)">${roles.map(r=>`<option value="${r.id}" ${r.id===u.roleId?'selected':''}>${esc(r.name)}</option>`).join('')}</select>`:esc(docRoleById(u.roleId)?.name||'')}</td>
+          <td>${u.id===state.documents.currentUserId?'<span class="status green"><span class="dot"></span>المستخدم الحالي</span>':`<button class="btn sm ghost" onclick="docSwitchUser('${u.id}')">تسجيل الدخول كهذا المستخدم</button>`}</td>
+        </tr>`).join('')}</tbody></table>
+      </div>
+    </div>
+  </div>`;
+}
+function updateRolePermission(roleId, perm, val){
+  if(!docCan('manageRoles')){ toast('لا تملك صلاحية إدارة الأدوار'); render(); return; }
+  const r = docRoleById(roleId); if(!r) return;
+  r.permissions[perm] = val;
+  save(); toast('تم تحديث الصلاحية'); render();
+}
+function openNewRoleForm(){
+  if(!docCan('manageRoles')) return;
+  showModal('إضافة دور جديد', `
+  <form onsubmit="submitNewRole(event)">
+    <div class="form-grid">
+      <div class="field full"><label>اسم الدور *</label><input name="name" required></div>
+      <div class="field full"><label>الوصف</label><input name="description"></div>
+    </div>
+    <div class="form-actions"><button class="btn">حفظ</button><button type="button" class="btn ghost" onclick="closeModal()">إلغاء</button></div>
+  </form>`);
+}
+function submitNewRole(e){
+  e.preventDefault();
+  if(!docCan('manageRoles')) return;
+  const f = new FormData(e.target);
+  state.documents.roles.push({id:uid('ROLE'), name:f.get('name'), description:f.get('description')||'', permissions:{view:true, create:false, edit:false, delete:false, download:true, manageRoles:false}});
+  save(); closeModal(); toast('تمت إضافة الدور'); render();
+}
+function deleteDocRole(roleId){
+  if(!docCan('manageRoles')) return;
+  if((state.documents.users||[]).some(u=>u.roleId===roleId)){ alert('لا يمكن حذف دور مرتبط بمستخدمين. أعد تعيين المستخدمين لدور آخر أولاً.'); return; }
+  if(!confirm('حذف هذا الدور؟')) return;
+  state.documents.roles = state.documents.roles.filter(r=>r.id!==roleId);
+  save(); toast('تم حذف الدور'); render();
+}
+function assignUserRole(userId, roleId){
+  if(!docCan('manageRoles')) return;
+  const u = (state.documents.users||[]).find(x=>x.id===userId); if(!u) return;
+  u.roleId = roleId;
+  save(); toast('تم تحديث دور المستخدم'); render();
+}
 /* ================= PLAN DASHBOARD (ERP · PLANS & INITIATIVES MODULE HOME) ================= */
 /* ================= PLAN DASHBOARD (ERP · PLANS & INITIATIVES MODULE HOME) ================= */
 function pagePlanDashboard(){
@@ -5946,8 +6064,9 @@ function render(){
     else if(currentPage==='settings') html = pageSettings();
     else html = pageHRDashboard();
   }
-  else if(currentModule==='documents'){
+   else if(currentModule==='documents'){
     if(currentPage==='documentsDashboard') html = pageDocumentsDashboard(currentProjectId);
+    else if(currentPage==='documentsRoles') html = pageDocumentsRoles();
     else if(currentPage==='notifications') html = pageNotifications();
     else if(currentPage==='settings') html = pageSettings();
     else html = pageDocumentsDashboard('DOC-MAIN');
