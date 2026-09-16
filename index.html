@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>نظام تخطيط الموارد المؤسسية (ERP) | جامعة الطائف</title>
-<meta name="description" content="نظام تخطيط الموارد المؤسسية (ERP) - جامعة الطائف">
+<title>نظام إدارة المشاريع | جامعة الطائف</title>
+<meta name="description" content="نظام إدارة المشاريع - جامعة الطائف">
 <link rel="icon" href="data:image/png;base64,iVBORw0KGgo=">
 <style>
 :root{
@@ -383,8 +383,8 @@ body.documents-theme main{padding:0;max-width:none}
     <div class="sidebar-brand">
       <img id="logoImg" alt="شعار جامعة الطائف">
       <div class="system">
-        <b id="sysNameAr">نظام تخطيط الموارد المؤسسية (ERP)</b>
-        <span id="sysNameEn">Taif University &middot; Enterprise Resource Planning System</span>
+        <b id="sysNameAr">نظام إدارة المشاريع</b>
+        <span id="sysNameEn">Taif University &middot; Project Management System</span>
       </div>
     </div>
     <div class="nav-scroll" id="navArea"></div>
@@ -416,7 +416,7 @@ body.documents-theme main{padding:0;max-width:none}
 
 <script>
 /* =========================================================
-   Taif University · Enterprise Resource Planning System
+   Taif University · Project Management System
    Client-side application, GitHub-Pages ready. Data in localStorage.
 ========================================================= */
 
@@ -800,7 +800,7 @@ function defaultState(){
   if(paidRun) accounting.journalEntries.push(buildPayrollJournalEntry(paidRun, accounting.accounts));
   const documents = buildDefaultDocuments();
   return {
-    org:{ nameAr:'نظام تخطيط الموارد المؤسسية (ERP)', nameEn:'Taif University · Enterprise Resource Planning System', user:'مكتب إدارة المشاريع (PMO)' },
+    org:{ nameAr:'نظام إدارة المشاريع', nameEn:'Taif University · Project Management System', user:'مكتب إدارة المشاريع (PMO)' },
     plan: strat.plan, axes: strat.axes, goals: strat.goals, initiatives: strat.initiatives,
     projects,
     finance,
@@ -5091,7 +5091,7 @@ function pageProjectReport(id){
     `<button class="btn ghost" onclick="go('projectDetail','${p.id}')">← ${t('العودة للمشروع')}</button>
      <button class="btn" onclick="downloadReportWord('${p.id}')">⬇️ ${t('تنزيل Word (قابل للتعديل)')}</button>
      <button class="btn secondary" onclick="printProjectReport('${p.id}')">🖨️ ${t('طباعة / PDF')}</button>
-     <button class="btn secondary" onclick="sendDeliverablesToDocuments('${p.id}')">📤 إرسال المخرجات لإدارة الوثائق الإلكترونية</button>
+     <button class="btn secondary" onclick="sendDeliverablesToDocuments('${p.id}')">📤 إرسال المخرجات لإدارة الوثائق</button>
      <button class="btn ghost" onclick="logReportIssued('${p.id}')">${t('تسجيل إصدار التقرير')}</button>`) +
   `<div class="card" style="padding:0;overflow:hidden">
     <div style="padding:28px" id="reportPreview">${buildReportHtml(p)}</div>
