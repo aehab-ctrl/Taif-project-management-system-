@@ -1807,6 +1807,10 @@ function loadState(){
         raw._planSyncApplied = true;
       }
       enrichProjectsWithScheduleData(raw.projects);
+      if(raw.org && (raw.org.nameAr==='نظام تخطيط الموارد المؤسسية (ERP)' || raw.org.nameEn==='Taif University · Enterprise Resource Planning System')){
+        raw.org.nameAr = 'نظام إدارة المشاريع';
+        raw.org.nameEn = 'Taif University · Project Management System';
+      }
       return raw;
     }
   }catch(e){}
