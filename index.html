@@ -5091,7 +5091,7 @@ function pageProjectReport(id){
     `<button class="btn ghost" onclick="go('projectDetail','${p.id}')">← ${t('العودة للمشروع')}</button>
      <button class="btn" onclick="downloadReportWord('${p.id}')">⬇️ ${t('تنزيل Word (قابل للتعديل)')}</button>
      <button class="btn secondary" onclick="printProjectReport('${p.id}')">🖨️ ${t('طباعة / PDF')}</button>
-     <button class="btn secondary" onclick="sendDeliverablesToDocuments('${p.id}')">📤 إرسال المخرجات لإدارة الوثائق</button>
+     <button class="btn secondary" onclick="sendDeliverablesToDocuments('${p.id}')">📤 إرسال المخرجات لإدارة الوثائق الإلكترونية</button>
      <button class="btn ghost" onclick="logReportIssued('${p.id}')">${t('تسجيل إصدار التقرير')}</button>`) +
   `<div class="card" style="padding:0;overflow:hidden">
     <div style="padding:28px" id="reportPreview">${buildReportHtml(p)}</div>
