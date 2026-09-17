@@ -554,9 +554,13 @@ const I18N = {
   'بداية أقدم مشروع':'Earliest Project Start', 'نهاية آخر مشروع':'Latest Project End',
   'المخطط صرفه':'Planned Spend', 'مؤشرات الأداء (KPIs)':'KPIs', 'إضافة مؤشر':'Add KPI',
   'فريق العمل':'Project Team', 'الاسم':'Name', 'الدور في المشروع':'Project Role', 'إضافة عضو':'Add Member',
+  'الإدارة':'Department', 'المسمى الوظيفي':'Job Title',
   'لم تتم إضافة أعضاء فريق العمل بعد.':'No team members added yet.',
   'أوامر الشراء':'Purchase Orders', 'أمر شراء جديد':'New Purchase Order', 'رقم أمر الشراء':'PO Number',
   'المورد':'Vendor', 'التاريخ':'Date', 'القيمة':'Value', 'لا توجد أوامر شراء مرتبطة بهذا المشروع.':'No purchase orders linked to this project.',
+  'طلبات الشراء':'Purchase Orders', 'طلب شراء جديد':'New Purchase Order', 'رقم طلب الشراء':'PO Number',
+  'لا توجد طلبات شراء مرتبطة بهذا المشروع.':'No purchase orders linked to this project.',
+  'إرسال الوثائق إلى إدارة الوثائق الإلكترونية':'Send Documents to Electronic Documents Management',
   'المؤشر':'Indicator', 'المستهدف':'Target', 'الوحدة':'Unit', 'لا توجد مؤشرات بعد.':'No KPIs yet.',
   'المشاريع المرتبطة':'Linked Projects', 'ربط مشروع':'Link Project', 'المشروع':'Project',
   'لا توجد مشاريع مرتبطة بهذه المبادرة بعد.':'No projects linked to this initiative yet.',
@@ -2443,21 +2447,21 @@ function pageProjectOverviewPanel(p, st, svar, bvar){
   </div>
   <div class="card" style="margin-top:15px">
     <div class="title"><h2>${t('فريق العمل')}</h2><button class="btn sm secondary" onclick="openTeamMemberForm('${p.id}')">+ ${t('إضافة عضو')}</button></div>
-    <div class="table-wrap"><table class="table"><thead><tr><th>${t('الاسم')}</th><th>${t('الدور في المشروع')}</th><th></th></tr></thead>
+    <div class="table-wrap"><table class="table"><thead><tr><th>${t('الاسم')}</th><th>${t('الإدارة')}</th><th>${t('المسمى الوظيفي')}</th><th>${t('الدور في المشروع')}</th><th></th></tr></thead>
     <tbody>${(p.team||[]).map(m=>`<tr>
-      <td>${esc(m.name)}</td><td>${esc(m.role)}</td>
+      <td>${esc(m.name)}</td><td>${esc(m.department||'—')}</td><td>${esc(m.jobTitle||'—')}</td><td>${esc(m.role)}</td>
       <td><button class="link" onclick="deleteTeamMember('${p.id}','${m.id}')">${t('حذف')}</button></td>
-    </tr>`).join('') || `<tr><td colspan="3"><div class="empty">${t('لم تتم إضافة أعضاء فريق العمل بعد.')}</div></td></tr>`}</tbody></table></div>
+    </tr>`).join('') || `<tr><td colspan="5"><div class="empty">${t('لم تتم إضافة أعضاء فريق العمل بعد.')}</div></td></tr>`}</tbody></table></div>
   </div>
   <div class="card" style="margin-top:15px">
-    <div class="title"><h2>${t('أوامر الشراء')}</h2><button class="btn sm secondary" onclick="openPoForm(null,null,'${p.id}')">+ ${t('أمر شراء جديد')}</button></div>
-    <div class="table-wrap"><table class="table"><thead><tr><th>${t('رقم أمر الشراء')}</th><th>${t('المورد')}</th><th>${t('التاريخ')}</th><th>${t('الحالة')}</th><th>${t('القيمة')}</th><th></th></tr></thead>
+    <div class="title"><h2>${t('طلبات الشراء')}</h2><button class="btn sm secondary" onclick="openPoForm(null,null,'${p.id}')">+ ${t('طلب شراء جديد')}</button></div>
+    <div class="table-wrap"><table class="table"><thead><tr><th>${t('رقم طلب الشراء')}</th><th>${t('المورد')}</th><th>${t('التاريخ')}</th><th>${t('الحالة')}</th><th>${t('القيمة')}</th><th></th></tr></thead>
     <tbody>${(state.finance.purchaseOrders||[]).filter(po=>po.projectId===p.id).map(po=>`<tr>
       <td>${esc(po.code)}</td><td>${esc(vendorById(po.vendorId)?.name||'—')}</td><td>${fmtDate(po.date)}</td>
       <td>${statusBadge(po.status, po.status==='مغلق'?'gray':po.status==='ملغى'?'red':'blue')}</td>
       <td>${fmtMoney(poTotal(po))}</td>
       <td><button class="link" onclick="openPoForm(null,'${po.id}')">${t('تعديل')}</button></td>
-    </tr>`).join('') || `<tr><td colspan="6"><div class="empty">${t('لا توجد أوامر شراء مرتبطة بهذا المشروع.')}</div></td></tr>`}</tbody></table></div>
+    </tr>`).join('') || `<tr><td colspan="6"><div class="empty">${t('لا توجد طلبات شراء مرتبطة بهذا المشروع.')}</div></td></tr>`}</tbody></table></div>
   </div>
   <div class="card" style="margin-top:15px">
     <div class="title"><h2>${t('مؤشرات الإنجاز (Milestones)')}</h2><button class="btn sm secondary" onclick="openMilestoneForm('${p.id}')">+ ${t('إضافة مؤشر')}</button></div>
@@ -2531,6 +2535,8 @@ function openTeamMemberForm(pid){
   <form onsubmit="submitTeamMember(event,'${pid}')">
     <div class="form-grid">
       <div class="field full"><label>الاسم *</label><input name="name" required></div>
+      <div class="field"><label>الإدارة *</label><input name="department" required placeholder="مثال: عمادة التعليم الإلكتروني"></div>
+      <div class="field"><label>المسمى الوظيفي *</label><input name="jobTitle" required placeholder="مثال: محلل نظم"></div>
       <div class="field full"><label>الدور في المشروع *</label><input name="role" required placeholder="مثال: مدير المشروع، منسق تقني، محلل أعمال"></div>
     </div>
     <div class="form-actions"><button class="btn">حفظ</button></div>
@@ -2541,7 +2547,7 @@ function submitTeamMember(e, pid){
   const f = new FormData(e.target);
   const p = projectById(pid);
   p.team = p.team||[];
-  p.team.push({id:uid('TEAM'), name:f.get('name'), role:f.get('role')});
+  p.team.push({id:uid('TEAM'), name:f.get('name'), department:f.get('department'), jobTitle:f.get('jobTitle'), role:f.get('role')});
   save(); closeModal(); toast('تمت إضافة العضو إلى فريق العمل'); go('projectDetail', pid);
 }
 function deleteTeamMember(pid, mid){
@@ -4460,6 +4466,7 @@ function buildDefaultDocuments(){
     F('DOC-ARCH','إدارة الوثائق والمحفوظات', 'DOC-MAIN'),
     F('DOC-ARCH-DELIV','مخرجات المشاريع', 'DOC-ARCH'),
     F('DOC-ARCH-PROC','المشتريات والعقود', 'DOC-ARCH'),
+    F('DOC-ARCH-INIT','تقارير المبادرات', 'DOC-ARCH'),
     F('DOC-MGMT','المديريات الإدارية', 'DOC-MAIN'),
     F('DOC-COMMITTEES','اللجان', 'DOC-MAIN'),
     F('DOC-STORE','المستودعات', 'DOC-MAIN'),
@@ -4669,6 +4676,24 @@ function sendPOToDocuments(poId){
   });
   toast('تم إرسال أمر الشراء إلى إدارة الوثائق الإلكترونية');
   notify('إرسال أمر شراء', `تم أرشفة أمر الشراء "${po.code}" في إدارة الوثائق الإلكترونية.`);
+}
+function sendInitiativeReportToDocuments(initId){
+  const init = initiativeById(initId); if(!init) return;
+  const st = initiativeStats(init);
+  const body = [
+    `الحالة: ${st.status} — نسبة الإنجاز: ${st.progress}%`,
+    `الميزانية الإجمالية: ${fmtMoney(st.budget)}`,
+    '',
+    'المشاريع المرتبطة:',
+    ...st.projects.map((p,i)=>`${i+1}. ${p.code} — ${p.nameAr} — الإنجاز: ${p.currentCompletion||0}% — الحالة: ${overallStatus(p).label}`)
+  ].join('\n');
+  addDocumentFile('DOC-ARCH-INIT', `تقرير مبادرة — ${init.title}`, {
+    sourceType:'initiative-report', sourceId:init.id, classification:'تقارير المبادرات',
+    ownerName:init.owner||'', body,
+    attachments:[{id:uid('ATT'), name:`Initiative-Report-${init.code}.pdf`}]
+  });
+  toast('تم إرسال الوثائق إلى إدارة الوثائق الإلكترونية');
+  notify('إرسال تقرير مبادرة', `تم أرشفة تقرير مبادرة "${init.title}" في إدارة الوثائق الإلكترونية.`);
 }
 
 /* ---- Documents: Roles & Permissions ---- */
@@ -4957,6 +4982,7 @@ function pageInitiativeDetail(id){
       <button class="btn ghost" onclick="go('initiatives')">← ${t('العودة للمبادرات')}</button>
       <button class="btn secondary" onclick="openInitiativeForm('${i.id}')">${t('تعديل')}</button>
       <button class="btn" onclick="downloadInitiativeReportWord('${i.id}')">📄 ${t('تنزيل تقرير المبادرة')}</button>
+      <button class="btn secondary" onclick="sendInitiativeReportToDocuments('${i.id}')">📤 ${t('إرسال الوثائق إلى إدارة الوثائق الإلكترونية')}</button>
       <button class="btn danger" onclick="deleteInitiative('${i.id}')">${t('حذف')}</button>
     `) +
   `<div class="detail-banner">
@@ -5360,7 +5386,7 @@ function pageProjectReport(id){
     `<button class="btn ghost" onclick="go('projectDetail','${p.id}')">← ${t('العودة للمشروع')}</button>
      <button class="btn" onclick="downloadReportWord('${p.id}')">⬇️ ${t('تنزيل Word (قابل للتعديل)')}</button>
      <button class="btn secondary" onclick="printProjectReport('${p.id}')">🖨️ ${t('طباعة / PDF')}</button>
-     <button class="btn secondary" onclick="sendDeliverablesToDocuments('${p.id}')">📤 إرسال المخرجات لإدارة الوثائق</button>
+     <button class="btn secondary" onclick="sendDeliverablesToDocuments('${p.id}')">📤 إرسال المخرجات لإدارة الوثائق الالكترونية</button>
      <button class="btn ghost" onclick="logReportIssued('${p.id}')">${t('تسجيل إصدار التقرير')}</button>`) +
   `<div class="card" style="padding:0;overflow:hidden">
     <div style="padding:28px" id="reportPreview">${buildReportHtml(p)}</div>
