@@ -2460,7 +2460,7 @@ function pageProjectOverviewPanel(p, st, svar, bvar){
       <td>${esc(po.code)}</td><td>${esc(vendorById(po.vendorId)?.name||'—')}</td><td>${fmtDate(po.date)}</td>
       <td>${statusBadge(po.status, po.status==='مغلق'?'gray':po.status==='ملغى'?'red':'blue')}</td>
       <td>${fmtMoney(poTotal(po))}</td>
-      <td><button class="link" onclick="openPoForm(null,'${po.id}')">${t('تعديل')}</button> <button class="link" onclick="deletePo('${po.id}','projectDetail','${p.id}')">${t('حذف')}</button></td>
+      <td><button class="link" onclick="openPoForm(null,'${po.id}')">${t('تعديل')}</button> <button class="link" style="margin-inline-start:10px" onclick="deletePo('${po.id}','projectDetail','${p.id}')">${t('حذف')}</button></td>
     </tr>`).join('') || `<tr><td colspan="6"><div class="empty">${t('لا توجد طلبات شراء مرتبطة بهذا المشروع.')}</div></td></tr>`}</tbody></table></div>
   </div>
   <div class="card" style="margin-top:15px">
