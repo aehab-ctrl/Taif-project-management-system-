@@ -553,6 +553,10 @@ const I18N = {
   'المبادرة غير موجودة':'Initiative not found', 'نبذة عن المبادرة':'Initiative Overview',
   'بداية أقدم مشروع':'Earliest Project Start', 'نهاية آخر مشروع':'Latest Project End',
   'المخطط صرفه':'Planned Spend', 'مؤشرات الأداء (KPIs)':'KPIs', 'إضافة مؤشر':'Add KPI',
+  'فريق العمل':'Project Team', 'الاسم':'Name', 'الدور في المشروع':'Project Role', 'إضافة عضو':'Add Member',
+  'لم تتم إضافة أعضاء فريق العمل بعد.':'No team members added yet.',
+  'أوامر الشراء':'Purchase Orders', 'أمر شراء جديد':'New Purchase Order', 'رقم أمر الشراء':'PO Number',
+  'المورد':'Vendor', 'التاريخ':'Date', 'القيمة':'Value', 'لا توجد أوامر شراء مرتبطة بهذا المشروع.':'No purchase orders linked to this project.',
   'المؤشر':'Indicator', 'المستهدف':'Target', 'الوحدة':'Unit', 'لا توجد مؤشرات بعد.':'No KPIs yet.',
   'المشاريع المرتبطة':'Linked Projects', 'ربط مشروع':'Link Project', 'المشروع':'Project',
   'لا توجد مشاريع مرتبطة بهذه المبادرة بعد.':'No projects linked to this initiative yet.',
@@ -1117,7 +1121,7 @@ function planStats(){
 function importedProjects(){
   return [
     {
-      id:uid('PRJ'), code:'DT-1001', nameAr:`خدمات التدريب في مجال تقنية المعلومات لمنسوبي الجامعة`, nameEn:'',
+      id:uid('PRJ'), code:'DT-1001', nameAr:`تحديث و تطوير الحاسب الألي`, nameEn:'',
       sector:'التحول الرقمي', vendor:'', sponsor:`عمادة التعليم الإلكتروني وتقنية المعلومات`, owner:`عمادة التعليم الإلكتروني وتقنية المعلومات`,
       manager:'', phase:PHASES[2],
       startDate:'2026-01-01', endDate:'2026-12-31', estimatedEndDate:'',
@@ -2438,6 +2442,24 @@ function pageProjectOverviewPanel(p, st, svar, bvar){
     </section>
   </div>
   <div class="card" style="margin-top:15px">
+    <div class="title"><h2>${t('فريق العمل')}</h2><button class="btn sm secondary" onclick="openTeamMemberForm('${p.id}')">+ ${t('إضافة عضو')}</button></div>
+    <div class="table-wrap"><table class="table"><thead><tr><th>${t('الاسم')}</th><th>${t('الدور في المشروع')}</th><th></th></tr></thead>
+    <tbody>${(p.team||[]).map(m=>`<tr>
+      <td>${esc(m.name)}</td><td>${esc(m.role)}</td>
+      <td><button class="link" onclick="deleteTeamMember('${p.id}','${m.id}')">${t('حذف')}</button></td>
+    </tr>`).join('') || `<tr><td colspan="3"><div class="empty">${t('لم تتم إضافة أعضاء فريق العمل بعد.')}</div></td></tr>`}</tbody></table></div>
+  </div>
+  <div class="card" style="margin-top:15px">
+    <div class="title"><h2>${t('أوامر الشراء')}</h2><button class="btn sm secondary" onclick="openPoForm(null,null,'${p.id}')">+ ${t('أمر شراء جديد')}</button></div>
+    <div class="table-wrap"><table class="table"><thead><tr><th>${t('رقم أمر الشراء')}</th><th>${t('المورد')}</th><th>${t('التاريخ')}</th><th>${t('الحالة')}</th><th>${t('القيمة')}</th><th></th></tr></thead>
+    <tbody>${(state.finance.purchaseOrders||[]).filter(po=>po.projectId===p.id).map(po=>`<tr>
+      <td>${esc(po.code)}</td><td>${esc(vendorById(po.vendorId)?.name||'—')}</td><td>${fmtDate(po.date)}</td>
+      <td>${statusBadge(po.status, po.status==='مغلق'?'gray':po.status==='ملغى'?'red':'blue')}</td>
+      <td>${fmtMoney(poTotal(po))}</td>
+      <td><button class="link" onclick="openPoForm(null,'${po.id}')">${t('تعديل')}</button></td>
+    </tr>`).join('') || `<tr><td colspan="6"><div class="empty">${t('لا توجد أوامر شراء مرتبطة بهذا المشروع.')}</div></td></tr>`}</tbody></table></div>
+  </div>
+  <div class="card" style="margin-top:15px">
     <div class="title"><h2>${t('مؤشرات الإنجاز (Milestones)')}</h2><button class="btn sm secondary" onclick="openMilestoneForm('${p.id}')">+ ${t('إضافة مؤشر')}</button></div>
     <div class="table-wrap"><table class="table"><thead><tr><th>${t('المؤشر')}</th><th>${t('البداية')}</th><th>${t('النهاية')}</th><th>${t('نسبة الإنجاز')}</th><th></th></tr></thead>
     <tbody>${(p.milestones||[]).map(m=>`<tr>
@@ -2502,6 +2524,29 @@ function submitMilestone(e, pid){
 function deleteMilestone(pid, mid){
   const p = projectById(pid);
   p.milestones = (p.milestones||[]).filter(m=>m.id!==mid);
+  save(); go('projectDetail', pid);
+}
+function openTeamMemberForm(pid){
+  showModal('إضافة عضو لفريق العمل', `
+  <form onsubmit="submitTeamMember(event,'${pid}')">
+    <div class="form-grid">
+      <div class="field full"><label>الاسم *</label><input name="name" required></div>
+      <div class="field full"><label>الدور في المشروع *</label><input name="role" required placeholder="مثال: مدير المشروع، منسق تقني، محلل أعمال"></div>
+    </div>
+    <div class="form-actions"><button class="btn">حفظ</button></div>
+  </form>`);
+}
+function submitTeamMember(e, pid){
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const p = projectById(pid);
+  p.team = p.team||[];
+  p.team.push({id:uid('TEAM'), name:f.get('name'), role:f.get('role')});
+  save(); closeModal(); toast('تمت إضافة العضو إلى فريق العمل'); go('projectDetail', pid);
+}
+function deleteTeamMember(pid, mid){
+  const p = projectById(pid);
+  p.team = (p.team||[]).filter(m=>m.id!==mid);
   save(); go('projectDetail', pid);
 }
 function openTaskForm(pid){
@@ -2701,15 +2746,16 @@ function deletePR(id){
 }
 
 /* ---- Purchase Orders ---- */
-function openPoForm(prId, existingId){
+function openPoForm(prId, existingId, presetProjectId){
   const po = existingId?poById(existingId):null;
   const pr = po?prById(po.prId):(prId?prById(prId):null);
-  const projId = po?.projectId || pr?.projectId || '';
+  const projId = po?.projectId || pr?.projectId || presetProjectId || '';
   showModal(po?'تعديل أمر الشراء':'إنشاء أمر شراء', `
   <form onsubmit="submitPo(event,'${existingId||''}','${pr?.id||po?.prId||''}')">
     <div class="form-grid">
       <div class="field full"><label>طلب الشراء المرجعي</label><input value="${pr?esc(pr.code):'بدون طلب شراء مرجعي'}" disabled></div>
-      <div class="field full"><label>المشروع *</label><select name="projectId" required>${state.projects.map(p=>`<option value="${p.id}" ${projId===p.id?'selected':''}>${esc(p.code)} — ${esc(p.nameAr)}</option>`).join('')}</select></div>
+      <div class="field"><label>رقم أمر الشراء</label><input name="code" value="${po?esc(po.code):''}" placeholder="يُترك فارغاً للترقيم التلقائي"></div>
+      <div class="field"><label>المشروع *</label><select name="projectId" required>${state.projects.map(p=>`<option value="${p.id}" ${projId===p.id?'selected':''}>${esc(p.code)} — ${esc(p.nameAr)}</option>`).join('')}</select></div>
       <div class="field"><label>المورد *</label><select name="vendorId" required>${state.finance.vendors.map(v=>`<option value="${v.id}" ${(po?.vendorId||'')===v.id?'selected':''}>${esc(v.name)}</option>`).join('')}</select></div>
       <div class="field"><label>العقد المرتبط (اختياري)</label><select name="contractId"><option value="">— بدون عقد —</option>${state.finance.contracts.map(c=>`<option value="${c.id}" ${(po?.contractId||'')===c.id?'selected':''}>${esc(c.code)} — ${esc(c.title)}</option>`).join('')}</select></div>
       <div class="field"><label>تاريخ الأمر</label><input type="date" name="date" value="${po?.date||today()}"></div>
@@ -2729,11 +2775,15 @@ function submitPo(e, existingId, prId){
   const data = Object.fromEntries(f.entries());
   const items = parseLineItems(data.itemsText); delete data.itemsText;
   if(existingId){
-    const po = poById(existingId); Object.assign(po, data); po.items = items;
+    const po = poById(existingId);
+    if(!data.code || !data.code.trim()) data.code = po.code;
+    Object.assign(po, data); po.items = items;
     toast('تم تحديث أمر الشراء');
   } else {
     const year = (data.date||today()).slice(0,4);
-    const po = Object.assign({id:uid('PO'), code:`PO-${year}-${String(state.finance.purchaseOrders.length+1).padStart(3,'0')}`, prId: prId||''}, data, {items});
+    const autoCode = `PO-${year}-${String(state.finance.purchaseOrders.length+1).padStart(3,'0')}`;
+    data.code = (data.code||'').trim() || autoCode;
+    const po = Object.assign({id:uid('PO'), prId: prId||''}, data, {items});
     state.finance.purchaseOrders.push(po);
     toast('تم إنشاء أمر الشراء');
   }
