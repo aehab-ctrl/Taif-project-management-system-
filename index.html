@@ -15,6 +15,7 @@
   --sidebar-bg:#ffffff; --sidebar-bg-2:#faf9f6; --sidebar-text:#4d5560; --sidebar-text-dim:#8b93a0;
   --sidebar-border:#e7e5df;
   --topbar-grad:linear-gradient(90deg,#cfa53c,#b8901f); --purple:#5b4fd6; --purple-dark:#453cb0; --purple-light:#eeecfc;
+  --erp-olive:#6f6445; --erp-olive-dark:#575030; --erp-tan:#a3915f; --erp-gold:#c9b06c; --erp-border:#d8cdaf; --erp-stripe:#efece3;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -116,6 +117,43 @@ body.sidebar-collapsed .sidebar{width:0;overflow:hidden}
 .progress-row{display:flex;align-items:center;gap:8px}
 .bar{flex:1;height:8px;background:#eee9dc;border-radius:99px;overflow:hidden}
 .bar span{display:block;height:100%;background:linear-gradient(90deg,var(--purple),#8f86e8);border-radius:99px}
+
+/* ===== ERP Financial Linking (project ↔ ERP "البرامج والمشاريع") ===== */
+.erp-tabs{display:flex;gap:6px;margin-bottom:14px;border-bottom:1px solid var(--erp-border)}
+.erp-tabs button{background:transparent;border:0;border-bottom:2px solid transparent;padding:9px 4px;margin-inline-end:18px;font-weight:800;font-size:12.5px;color:var(--muted)}
+.erp-tabs button.active{color:var(--erp-olive);border-bottom-color:var(--erp-olive)}
+.erp-table{width:100%;border-collapse:collapse;font-size:12px}
+.erp-table thead th{background:var(--erp-olive);color:#fff;font-size:11.5px;font-weight:700;padding:9px 10px;text-align:right}
+.erp-table td{padding:9px 10px;border-bottom:1px solid var(--erp-border);vertical-align:middle}
+.erp-table tbody tr:nth-child(even){background:var(--erp-stripe)}
+.erp-code{font-family:Consolas,monospace;font-size:11px;background:#f4f1e9;border:1px solid var(--erp-border);border-radius:5px;padding:2px 6px}
+.erp-sync-badge{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:3px 9px;font-size:10.5px;font-weight:800}
+.erp-sync-badge.on{background:#e9f4ec;color:#1f6a35}
+.erp-sync-badge.off{background:#f1f1ee;color:#6c7280}
+.erp-sync-badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+/* the "form" that mirrors the university ERP screen fields */
+.erp-form-panel{border:1px solid var(--erp-border);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.erp-form-head{background:linear-gradient(90deg,var(--erp-tan),var(--erp-olive));color:#fff;padding:9px 14px;font-size:12.5px;font-weight:800;display:flex;justify-content:space-between;align-items:center}
+.erp-form-head .path{font-family:Consolas,monospace;font-size:11px;font-weight:400;opacity:.9}
+.erp-form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--erp-border)}
+@media(max-width:720px){.erp-form-grid{grid-template-columns:1fr}}
+.erp-form-row{background:#fbfaf6;padding:9px 12px;display:flex;flex-direction:column;gap:3px}
+.erp-form-row label{font-size:10.5px;color:var(--erp-olive-dark);font-weight:800}
+.erp-form-row .val{background:#eaf0f6;border:1px solid #cfd9e6;border-radius:4px;padding:6px 9px;font-size:12.5px;font-family:Consolas,monospace;color:#1c2b3a;min-height:16px}
+.erp-form-row.full{grid-column:1/-1}
+.erp-section-label{background:#f4f1e9;color:var(--erp-olive-dark);font-size:11px;font-weight:800;padding:6px 12px;grid-column:1/-1;border-top:1px solid var(--erp-border)}
+
+.erp-payload{background:#1f1c14;color:#e9e3d2;border-radius:8px;padding:12px 14px;font-family:Consolas,monospace;font-size:11.3px;line-height:1.7;overflow:auto;max-height:260px;white-space:pre-wrap;word-break:break-all}
+
+.erp-log-table td.msg{font-family:Consolas,monospace;font-size:10.8px;color:#4a4331}
+.erp-log-table .path{font-family:Consolas,monospace;font-size:11px;color:#4a4331;background:#f4f1e9;border:1px solid var(--erp-border);border-radius:5px;padding:2px 6px}
+.erp-status-200{color:#1f6a35;font-weight:800}
+.erp-payload-toggle{background:none;border:1px solid var(--erp-border);border-radius:6px;padding:3px 8px;font-size:10.5px;color:var(--erp-olive-dark);cursor:pointer}
+.erp-connect-strip{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.erp-dir-badge{display:inline-flex;align-items:center;gap:3px;border-radius:99px;padding:3px 9px;font-size:10.5px;font-weight:800}
+.erp-dir-badge.in{background:#eaf1fa;color:#204d85}
+.erp-dir-badge.out{background:#fbf1e2;color:#8a5c0f}
 
 .breadcrumb{font-size:11.5px;color:var(--muted);margin-bottom:6px}
 .breadcrumb b{color:var(--ink)}
@@ -436,6 +474,7 @@ const I18N = {
   // Sidebar section labels
   'الرئيسية':'Home', 'الخطط والمبادرات':'Plans & Initiatives', 'إدارة المشاريع':'Project Management',
   'التقارير':'Reports', 'الحوكمة القيادية':'Leadership Governance', 'النظام':'System',
+  'التكامل':'Integration', 'تكامل ERP':'ERP Integration',
   'عمادة التعليم الإلكتروني وتقنية المعلومات':'Deanship of E-Learning & IT',
   // Sidebar nav items (Plans module)
   'لوحة الخطة الاستراتيجية':'Strategic Plan Dashboard', 'المحاور والأهداف الاستراتيجية':'Axes & Strategic Goals',
@@ -799,6 +838,8 @@ function defaultState(){
   const paidRun = hr.payrollRuns.find(r=>r.status==='مصروف');
   if(paidRun) accounting.journalEntries.push(buildPayrollJournalEntry(paidRun, accounting.accounts));
   const documents = buildDefaultDocuments();
+  const erpLinks = buildDefaultErpLinks(projects);
+  const erpApiLog = buildDefaultErpApiLog(projects, erpLinks);
   return {
     org:{ nameAr:'نظام إدارة المشاريع', nameEn:'Taif University · Project Management System', user:'مكتب إدارة المشاريع (PMO)' },
     plan: strat.plan, axes: strat.axes, goals: strat.goals, initiatives: strat.initiatives,
@@ -807,9 +848,167 @@ function defaultState(){
     accounting,
     hr,
     documents,
+    erpLinks,
+    erpApiLog,
     notifications: [],
     audit: []
   };
+}
+
+/* ================= ERP FINANCIAL LINKING (project ↔ ERP "البرامج والمشاريع" record, via simulated REST API) ================= */
+function buildDefaultErpLinks(projects){
+  const links = {};
+  projects.forEach((p,idx)=>{
+    const synced = Number(p.currentCompletion||0) > 0;
+    links[p.id] = {
+      programCode: p.code,
+      contractSource: 'الحكومة المركزية (المشمولة بالميزانية العامة)',
+      currency: 'ر.س',
+      notes: '',
+      synced,
+      lastSync: synced ? new Date(Date.now() - (30+idx*7)*60000).toISOString() : null
+    };
+  });
+  return links;
+}
+function erpFieldsForProject(p){
+  const link = (state.erpLinks && state.erpLinks[p.id]) || {};
+  const contractValue = Number(p.allocatedBudget||0);
+  const spent = Number(p.actualSpend||0);
+  return {
+    programCode: link.programCode || p.code,
+    descriptionAr: p.nameAr,
+    startDate: p.startDate,
+    endDate: p.endDate,
+    contractSource: link.contractSource || 'الحكومة المركزية (المشمولة بالميزانية العامة)',
+    currency: link.currency || 'ر.س',
+    contractValue,
+    originalCostValue: contractValue,
+    deferredCredits: 0,
+    available: contractValue - spent,
+    openingDisbursement: 0,
+    currentDisbursement: spent,
+    previousDisbursement: Math.max(0, spent - Math.round(spent*0.15)),
+    totalDisbursement: spent,
+    previousCommitments: 0,
+    currentCommitments: Math.max(0, Math.round((contractValue-spent)*0.1)),
+    totalCommitments: Math.max(0, Math.round((contractValue-spent)*0.1)),
+    notes: link.notes || ''
+  };
+}
+/* Extended ERP "البرامج والمشاريع" fields for the project's own ERP tab (Project Management module only) */
+function erpProjectRecordFields(p){
+  const base = erpFieldsForProject(p);
+  const contractValue = base.contractValue, spent = base.currentDisbursement;
+  const pos = (state.finance.purchaseOrders||[]).filter(po=>po.projectId===p.id);
+  const activeContracts = pos.filter(po=>po.status!=='ملغى').length;
+  const settledContracts = pos.filter(po=>po.status==='مكتمل'||po.status==='مسدد').length;
+  return Object.assign({}, base, {
+    recordCode: p.id.slice(-6).toUpperCase(),
+    category: p.sector || 'التحول الرقمي',
+    ministryContractCode: 'وز-' + p.code.replace('DT-',''),
+    openingDisbursement: Math.round(spent*0.05),
+    previousBudgetCommitments: Math.round((contractValue-spent)*0.04),
+    currentBudgetCommitments: base.currentCommitments,
+    totalBudgetCommitments: base.currentCommitments + Math.round((contractValue-spent)*0.04),
+    costCommitmentValue: base.currentCommitments,
+    costCommitmentContracts: pos.length,
+    remainingCostCommitments: Math.max(0, base.available - base.currentCommitments),
+    transfersFrom: 0,
+    transfersTo: Math.round(contractValue*0.02),
+    actualContracts: pos.length,
+    settledContracts,
+    activeContracts,
+    subContracts: pos.map(po=>({
+      code: po.code,
+      description: `أمر شراء — ${(vendorById(po.vendorId)?.name)||'—'}`,
+      year: (po.date||p.startDate||'').slice(0,4),
+      beneficiary: (vendorById(po.vendorId)?.name)||'—',
+      status: po.status,
+      value: poTotal(po)
+    }))
+  });
+}
+let projectDetailTab = 'overview';
+function setProjectDetailTab(id, tab){ projectDetailTab = tab; go('projectDetail', id); }
+function pageProjectErpPanel(p){
+  const f = erpProjectRecordFields(p);
+  const link = state.erpLinks[p.id] || {};
+  return `
+  <div class="erp-connect-strip">
+    <span class="erp-sync-badge ${link.synced?'on':'off'}"><span class="dot"></span>${link.synced?'متزامن مع نظام ERP':'لم تتم المزامنة بعد'}</span>
+    <span class="small muted">آخر مزامنة: ${timeAgoAr(link.lastSync)}</span>
+    <button class="btn sm ghost" onclick="sendProjectToErp('${p.id}', this)" id="erpProjectSyncBtn">⬆ رفع إلى ERP</button>
+    <button class="btn sm ghost" onclick="receiveProjectFromErp('${p.id}', this)" id="erpProjectReceiveBtn">⬇ سحب من ERP</button>
+  </div>
+  <div class="erp-form-panel">
+    <div class="erp-form-head"><span>البرامج والمشاريع</span><span class="path">ERP · Programs &amp; Projects Record</span></div>
+    <div class="erp-form-grid">
+      <div class="erp-section-label">بيانات البرنامج/المشروع</div>
+      <div class="erp-form-row"><label>الرمز</label><div class="val">${esc(f.recordCode)}</div></div>
+      <div class="erp-form-row"><label>رقم البرنامج / المشروع*</label><div class="val">${esc(f.programCode)}</div></div>
+      <div class="erp-form-row"><label>الفئة*</label><div class="val">${esc(f.category)}</div></div>
+      <div class="erp-form-row"><label>رمز العقد بالوزارة</label><div class="val">${esc(f.ministryContractCode)}</div></div>
+      <div class="erp-form-row full"><label>الوصف*</label><div class="val">${esc(f.descriptionAr)}</div></div>
+      <div class="erp-form-row"><label>تاريخ البداية*</label><div class="val">${esc(fmtDate(f.startDate))}</div></div>
+      <div class="erp-form-row"><label>تاريخ النهاية*</label><div class="val">${esc(fmtDate(f.endDate))}</div></div>
+      <div class="erp-form-row"><label>مصدر العقد*</label><div class="val">${esc(f.contractSource)}</div></div>
+      <div class="erp-form-row"><label>العملة*</label><div class="val">${esc(f.currency)}</div></div>
+      <div class="erp-section-label">التكاليف</div>
+      <div class="erp-form-row"><label>قيمة العقد</label><div class="val">${fmtMoney(f.contractValue)}</div></div>
+      <div class="erp-form-row"><label>قيمة التكلفة الأصلية</label><div class="val">${fmtMoney(f.originalCostValue)}</div></div>
+      <div class="erp-form-row"><label>اعتمادات مؤجلة</label><div class="val">${fmtMoney(f.deferredCredits)}</div></div>
+      <div class="erp-form-row"><label>المتاح</label><div class="val">${fmtMoney(f.available)}</div></div>
+      <div class="erp-section-label">مصروف التكاليف</div>
+      <div class="erp-form-row"><label>المنصرف إفتتاحي</label><div class="val">${fmtMoney(f.openingDisbursement)}</div></div>
+      <div class="erp-form-row"><label>المصروف حالياً</label><div class="val">${fmtMoney(f.currentDisbursement)}</div></div>
+      <div class="erp-form-row"><label>المنصرف سابقاً</label><div class="val">${fmtMoney(f.previousDisbursement)}</div></div>
+      <div class="erp-form-row"><label>مجموع المنصرف</label><div class="val">${fmtMoney(f.totalDisbursement)}</div></div>
+      <div class="erp-section-label">ارتباطات الميزانية</div>
+      <div class="erp-form-row"><label>الارتباطات سابقاً</label><div class="val">${fmtMoney(f.previousBudgetCommitments)}</div></div>
+      <div class="erp-form-row"><label>الارتباطات حالياً</label><div class="val">${fmtMoney(f.currentBudgetCommitments)}</div></div>
+      <div class="erp-form-row"><label>مجموع الارتباطات</label><div class="val">${fmtMoney(f.totalBudgetCommitments)}</div></div>
+      <div class="erp-form-row"><label>المنصرف</label><div class="val">${fmtMoney(f.currentDisbursement)}</div></div>
+      <div class="erp-section-label">ارتباطات التكاليف</div>
+      <div class="erp-form-row"><label>قيمة ارتباطات التكلفة</label><div class="val">${fmtMoney(f.costCommitmentValue)}</div></div>
+      <div class="erp-form-row"><label>عقود التكلفة</label><div class="val">${f.costCommitmentContracts}</div></div>
+      <div class="erp-form-row"><label>المتبقي من ارتباطات التكلفة</label><div class="val">${fmtMoney(f.remainingCostCommitments)}</div></div>
+      <div class="erp-section-label">مناقلات التكاليف</div>
+      <div class="erp-form-row"><label>مجموع المناقلات منه</label><div class="val">${fmtMoney(f.transfersFrom)}</div></div>
+      <div class="erp-form-row"><label>مجموع المناقلات له</label><div class="val">${fmtMoney(f.transfersTo)}</div></div>
+      <div class="erp-section-label">عقود المستفيدين</div>
+      <div class="erp-form-row"><label>العقود الفعلية</label><div class="val">${f.actualContracts}</div></div>
+      <div class="erp-form-row"><label>العقود المسواة</label><div class="val">${f.settledContracts}</div></div>
+      <div class="erp-form-row"><label>العقود الفعالة</label><div class="val">${f.activeContracts}</div></div>
+      <div class="erp-form-row full"><label>ملاحظات</label><div class="val">${esc(f.notes)||'—'}</div></div>
+    </div>
+  </div>
+  <section class="card">
+    <div class="title"><h2>العقود الفرعية (من أوامر الشراء المرتبطة بالمشروع)</h2><span class="badge-count">${f.subContracts.length} عقد</span></div>
+    <div class="table-wrap"><table class="erp-table"><thead><tr><th>العقد</th><th>الوصف</th><th>السنة</th><th>المستفيد</th><th>وضع العقد</th><th>قيمة العقد</th></tr></thead>
+    <tbody>${f.subContracts.length? f.subContracts.map(c=>`<tr>
+      <td><span class="erp-code">${esc(c.code)}</span></td>
+      <td class="small">${esc(c.description)}</td>
+      <td>${esc(c.year)}</td>
+      <td class="small">${esc(c.beneficiary)}</td>
+      <td>${esc(c.status)}</td>
+      <td>${fmtMoney(c.value)}</td>
+    </tr>`).join('') : `<tr><td colspan="6"><div class="empty">لا توجد أوامر شراء مرتبطة بهذا المشروع حتى الآن.</div></td></tr>`}</tbody></table></div>
+  </section>`;
+}
+function buildDefaultErpApiLog(projects, links){
+  const synced = projects.filter(p=>links[p.id] && links[p.id].synced).slice(0,6);
+  return synced.map((p,idx)=>{
+    const link = links[p.id];
+    const isIn = idx%2===1;
+    return {
+      id: uid('LOG'), time: link.lastSync, method: isIn?'GET':'POST', direction: isIn?'in':'out',
+      endpoint: isIn ? '/finance/programs-projects/'+p.code+'/pull' : '/finance/programs-projects/sync',
+      projectId: p.id, projectCode: p.code, projectName: p.nameAr,
+      status:200, durationMs: Math.round(260+Math.random()*420),
+      message: isIn ? 'تم سحب بيانات محدثة من نظام ERP (Pull).' : 'تم رفع بيانات البرنامج/المشروع إلى نظام ERP (Push).'
+    };
+  }).sort((a,b)=>(b.time||'').localeCompare(a.time||''));
 }
 
 /* ================= STRATEGY MODEL (PLAN → AXIS → GOAL → INITIATIVE → PROJECT) ================= */
@@ -1811,6 +2010,12 @@ function loadState(){
         raw.org.nameAr = 'نظام إدارة المشاريع';
         raw.org.nameEn = 'Taif University · Project Management System';
       }
+      if(!raw.erpLinks){
+        raw.erpLinks = buildDefaultErpLinks(raw.projects);
+      }
+      if(!raw.erpApiLog){
+        raw.erpApiLog = buildDefaultErpApiLog(raw.projects, raw.erpLinks);
+      }
       return raw;
     }
   }catch(e){}
@@ -1853,6 +2058,8 @@ function renderNav(){
     <button class="nav-btn" data-p="contracts" onclick="go('contracts')"><span class="ico">📑</span> العقود</button>
     <div class="section-label">التقارير</div>
     <button class="nav-btn" data-p="financeReports" onclick="go('financeReports')"><span class="ico">📄</span> التقارير المالية</button>
+    <div class="section-label">التكامل</div>
+    <button class="nav-btn" data-p="erpFinanceLink" onclick="go('erpFinanceLink')"><span class="ico">🔗</span> تكامل ERP</button>
     <div class="section-label">النظام</div>
     <button class="nav-btn" data-p="__back" onclick="switchModule('plans')"><span class="ico">🧭</span> نظام الخطط والمبادرات</button>
     <button class="nav-btn" data-p="notifications" onclick="go('notifications')"><span class="ico">🔔</span> الإشعارات</button>
@@ -1937,6 +2144,8 @@ function renderNav(){
     <div class="section-label">${t('الحوكمة القيادية')}</div>
     <button class="nav-btn" data-p="leadership" onclick="go('leadership')"><span class="ico">🧭</span> ${t('متابعة القيادات والمبادرات')}</button>
     <button class="nav-btn" data-p="decisionsCenter" onclick="go('decisionsCenter')"><span class="ico">⚖️</span> ${t('مركز القرارات')}</button>
+    <div class="section-label">${t('التكامل')}</div>
+    <button class="nav-btn" data-p="erpFinanceLink" onclick="go('erpFinanceLink')"><span class="ico">🔗</span> ${t('تكامل ERP')}</button>
     <div class="section-label">${t('النظام')}</div>
     <button class="nav-btn" data-p="notifications" onclick="go('notifications')"><span class="ico">🔔</span> ${t('الإشعارات')}</button>
     <button class="nav-btn" data-p="settings" onclick="go('settings')"><span class="ico">⚙️</span> ${t('الإعدادات')}</button>
@@ -2164,10 +2373,15 @@ function pageProjectDetail(id){
     </div>
   </div>
   <div class="tabs">
-    <button class="tab active">${t('نظرة عامة')}</button>
+    <button class="tab ${projectDetailTab==='overview'?'active':''}" onclick="setProjectDetailTab('${p.id}','overview')">${t('نظرة عامة')}</button>
+    <button class="tab ${projectDetailTab==='erp'?'active':''}" onclick="setProjectDetailTab('${p.id}','erp')">🔗 ${t('تكامل ERP')}</button>
     <button class="tab" onclick="go('schedule')">${t('الجدول الزمني')}</button>
     <button class="tab" onclick="go('projectReport','${p.id}')">${t('إنشاء تقرير')}</button>
-  </div>
+  </div>` +
+  (projectDetailTab==='erp' ? pageProjectErpPanel(p) : pageProjectOverviewPanel(p, st, svar, bvar));
+}
+function pageProjectOverviewPanel(p, st, svar, bvar){
+  return `
   <div class="two">
     <section class="card">
       <div class="title"><h2>${t('معلومات المشروع')}</h2></div>
@@ -2681,7 +2895,8 @@ function pageFinanceDashboard(){
   const recentPRs = [...F.purchaseRequests].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,5);
   const recentPOs = [...F.purchaseOrders].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,5);
   return head('النظام المالي والمشتريات','لوحة المالية والمشتريات','نظرة عامة على الموازنة، الالتزامات القائمة، ودورة المشتريات — مرتبطة مباشرة بمحفظة المشاريع.',
-    `<button class="btn ghost" onclick="go('financeBudget')">📊 الموازنة التقديرية</button>
+    `<button class="erp-sync-badge on" style="cursor:pointer;border:0" onclick="go('erpFinanceLink')" title="عرض تكامل ERP"><span class="dot"></span>تكامل ERP</button>
+     <button class="btn ghost" onclick="go('financeBudget')">📊 الموازنة التقديرية</button>
      <button class="btn" onclick="openPrForm()">+ طلب شراء جديد</button>`) +
   `<div class="grid" style="margin-bottom:15px">
     <div class="card kpi-card"><small>الموازنة المعتمدة</small><b style="font-size:19px">${fmtMoney(fs_.allocated)}</b><em>عبر كامل المحفظة</em></div>
@@ -5950,6 +6165,219 @@ function pageNotifications(){
 }
 
 /* ================= SETTINGS ================= */
+function timeAgoAr(iso){
+  if(!iso) return '—';
+  const mins = Math.max(0, Math.round((Date.now()-new Date(iso).getTime())/60000));
+  if(mins<1) return 'الآن';
+  if(mins<60) return `قبل ${mins} دقيقة`;
+  const hrs = Math.round(mins/60);
+  if(hrs<24) return `قبل ${hrs} ساعة`;
+  const days = Math.round(hrs/24);
+  return `قبل ${days} يوم`;
+}
+let erpLinkView = 'projects';
+function setErpLinkView(v){ erpLinkView = v; render(); }
+function pageErpFinanceLink(){
+  const syncedCount = state.projects.filter(p=>state.erpLinks[p.id]?.synced).length;
+  return head('النظام المالي والمشتريات','تكامل نظام تخطيط الموارد المؤسسية (ERP)',
+    'تكامل مباشر بين محفظة المشاريع وسجل «البرامج والمشاريع» في نظام ERP الجامعي عبر واجهة برمجة تطبيقات (REST API) — رفع وسحب بيانات كل مشروع باسمه ورقمه التعريفي الخاص (Project ID).',
+    `<button class="btn ghost" onclick="go('financeDashboard')">← لوحة المالية</button>
+     <button class="btn ghost" id="erpReceiveAllBtn" onclick="receiveAllFromErp()">⬇ سحب التحديثات من ERP</button>`) +
+  `<div class="grid" style="margin-bottom:15px">
+    <div class="card kpi-card"><small>إجمالي المشاريع</small><b style="font-size:19px">${state.projects.length}</b><em>في محفظة المشاريع</em></div>
+    <div class="card kpi-card"><small>متزامن مع ERP</small><b style="font-size:19px">${syncedCount}</b><em>من إجمالي ${state.projects.length}</em></div>
+    <div class="card kpi-card"><small>بحاجة إلى مزامنة</small><b style="font-size:19px">${state.projects.length-syncedCount}</b><em>لم تُرسل بعد</em></div>
+    <div class="card kpi-card"><small>عمليات API المسجّلة</small><b style="font-size:19px">${state.erpApiLog.length}</b><em>في سجل التكامل</em></div>
+  </div>
+  <div class="erp-tabs">
+    <button class="${erpLinkView==='projects'?'active':''}" onclick="setErpLinkView('projects')">البرامج والمشاريع</button>
+    <button class="${erpLinkView==='log'?'active':''}" onclick="setErpLinkView('log')">سجل التكامل</button>
+  </div>` +
+  (erpLinkView==='projects' ? erpLinkProjectsTable() : erpApiLogTable());
+}
+function erpLinkProjectsTable(){
+  return `<section class="card">
+    <div class="title"><h2>سجل البرامج والمشاريع</h2><span class="badge-count">${state.projects.length} سجل</span></div>
+    <div class="table-wrap"><table class="erp-table"><thead><tr>
+      <th>رقم البرنامج/المشروع</th><th>الوصف</th><th>قيمة العقد</th><th>المصروف حالياً</th><th>المتاح</th><th>حالة المزامنة</th><th>آخر مزامنة</th><th></th>
+    </tr></thead><tbody>${state.projects.map(p=>{
+      const f = erpFieldsForProject(p);
+      const link = state.erpLinks[p.id]||{};
+      return `<tr>
+        <td><span class="erp-code">${esc(f.programCode)}</span></td>
+        <td class="small">${esc(p.nameAr)}</td>
+        <td>${fmtMoney(f.contractValue)}</td>
+        <td>${fmtMoney(f.currentDisbursement)}</td>
+        <td>${fmtMoney(f.available)}</td>
+        <td><span class="erp-sync-badge ${link.synced?'on':'off'}"><span class="dot"></span>${link.synced?'متزامن':'لم تتم المزامنة'}</span></td>
+        <td class="small">${timeAgoAr(link.lastSync)}</td>
+        <td><button class="btn sm ghost" onclick="openErpPushModal('${p.id}')">تفاصيل API</button> <button class="btn sm ghost" onclick="receiveProjectFromErp('${p.id}', this)">⬇</button></td>
+      </tr>`;
+    }).join('')}</tbody></table></div>
+  </section>`;
+}
+function erpDirectionBadge(l){
+  const isIn = l.direction==='in' || l.method==='GET';
+  return isIn ? '<span class="erp-dir-badge in">⬇ سحب</span>' : '<span class="erp-dir-badge out">⬆ رفع</span>';
+}
+function erpApiLogTable(){
+  const inCount = state.erpApiLog.filter(l=>l.direction==='in'||l.method==='GET').length;
+  const outCount = state.erpApiLog.length - inCount;
+  return `<section class="card">
+    <div class="title"><h2>سجل التكامل (API)</h2><span class="badge-count">${state.erpApiLog.length} عملية · ⬆ ${outCount} رفع · ⬇ ${inCount} سحب</span></div>
+    <div class="table-wrap"><table class="erp-table erp-log-table"><thead><tr>
+      <th>الوقت</th><th>المشروع</th><th>الاتجاه</th><th>الطريقة</th><th>المسار (Endpoint)</th><th>الحالة</th><th>مدة الاستجابة</th><th></th>
+    </tr></thead><tbody>${state.erpApiLog.length? state.erpApiLog.map(l=>`<tr>
+        <td class="small">${timeAgoAr(l.time)}</td>
+        <td class="small"><span class="erp-code">${esc(l.projectCode)}</span> ${esc(l.projectName)}</td>
+        <td>${erpDirectionBadge(l)}</td>
+        <td><b>${esc(l.method)}</b></td>
+        <td><span class="path">${esc(l.endpoint)}</span></td>
+        <td class="erp-status-200">${l.status} OK</td>
+        <td class="small">${l.durationMs}ms</td>
+        <td><button class="erp-payload-toggle" onclick="toggleLogPayload('${l.id}')">${(l.direction==='in'||l.method==='GET')?'عرض تفاصيل الاستجابة':'عرض تفاصيل الطلب'}</button></td>
+      </tr><tr id="logpayload-${l.id}" style="display:none"><td colspan="8"><div class="small muted" style="margin-bottom:6px">${esc(l.message)}</div><div class="erp-payload">${esc(JSON.stringify(erpPayloadForLog(l), null, 2))}</div></td></tr>`).join('') : `<tr><td colspan="8"><div class="empty">لا توجد عمليات مزامنة بعد.</div></td></tr>`}</tbody></table></div>
+  </section>`;
+}
+function erpPayloadForLog(l){
+  const p = projectById(l.projectId);
+  if(!p) return {project_id:l.projectId, project_code:l.projectCode, project_name:l.projectName};
+  const f = erpFieldsForProject(p);
+  return {
+    project_id: p.id,
+    project_code: f.programCode,
+    project_name_ar: f.descriptionAr,
+    start_date: f.startDate,
+    end_date: f.endDate,
+    contract_source: f.contractSource,
+    currency: f.currency,
+    contract_value: f.contractValue,
+    current_disbursement: f.currentDisbursement,
+    total_disbursement: f.totalDisbursement,
+    current_commitments: f.currentCommitments,
+    available: f.available
+  };
+}
+function toggleLogPayload(id){
+  const row = document.getElementById('logpayload-'+id);
+  if(row) row.style.display = row.style.display==='none' ? '' : 'none';
+}
+function openErpPushModal(projectId){
+  const p = projectById(projectId);
+  if(!p) return;
+  const f = erpFieldsForProject(p);
+  const payload = erpPayloadForLog({projectId:p.id});
+  showModal('طلب التكامل مع ERP', `
+  <div class="erp-form-panel">
+    <div class="erp-form-head"><span>POST — البرامج والمشاريع</span><span class="path">/finance/programs-projects/sync</span></div>
+    <div class="erp-form-grid">
+      <div class="erp-section-label">بيانات البرنامج/المشروع</div>
+      <div class="erp-form-row"><label>رقم البرنامج / المشروع*</label><div class="val">${esc(f.programCode)}</div></div>
+      <div class="erp-form-row"><label>معرّف المشروع (Project ID)</label><div class="val">${esc(p.id)}</div></div>
+      <div class="erp-form-row full"><label>الوصف*</label><div class="val">${esc(f.descriptionAr)}</div></div>
+      <div class="erp-form-row"><label>تاريخ البداية*</label><div class="val">${esc(fmtDate(f.startDate))}</div></div>
+      <div class="erp-form-row"><label>تاريخ النهاية*</label><div class="val">${esc(fmtDate(f.endDate))}</div></div>
+      <div class="erp-form-row"><label>مصدر العقد*</label><div class="val">${esc(f.contractSource)}</div></div>
+      <div class="erp-form-row"><label>العملة*</label><div class="val">${esc(f.currency)}</div></div>
+      <div class="erp-section-label">التكاليف</div>
+      <div class="erp-form-row"><label>قيمة العقد</label><div class="val">${fmtMoney(f.contractValue)}</div></div>
+      <div class="erp-form-row"><label>قيمة التكلفة الأصلية</label><div class="val">${fmtMoney(f.originalCostValue)}</div></div>
+      <div class="erp-form-row"><label>المتاح</label><div class="val">${fmtMoney(f.available)}</div></div>
+      <div class="erp-form-row"><label>اعتمادات مؤجلة</label><div class="val">${fmtMoney(f.deferredCredits)}</div></div>
+      <div class="erp-section-label">مصروف التكاليف</div>
+      <div class="erp-form-row"><label>المصروف حالياً</label><div class="val">${fmtMoney(f.currentDisbursement)}</div></div>
+      <div class="erp-form-row"><label>مجموع المنصرف</label><div class="val">${fmtMoney(f.totalDisbursement)}</div></div>
+      <div class="erp-section-label">ارتباطات التكاليف</div>
+      <div class="erp-form-row"><label>الارتباطات حالياً</label><div class="val">${fmtMoney(f.currentCommitments)}</div></div>
+      <div class="erp-form-row"><label>مجموع الارتباطات</label><div class="val">${fmtMoney(f.totalCommitments)}</div></div>
+      <div class="erp-form-row full"><label>ملاحظات</label><div class="val">${esc(f.notes)||'—'}</div></div>
+    </div>
+  </div>
+  <div class="title"><h2 style="font-size:13px">بيانات الطلب (JSON)</h2></div>
+  <div class="erp-payload">${esc(JSON.stringify(payload, null, 2))}</div>
+  <div class="form-actions" style="margin-top:14px">
+    <button class="btn" id="erpSendBtn" onclick="sendProjectToErp('${p.id}')">⬆ رفع إلى ERP</button>
+    <button class="btn ghost" onclick="closeModal()">إلغاء</button>
+  </div>`);
+}
+function sendProjectToErp(projectId, btnEl){
+  const btn = btnEl || document.getElementById('erpSendBtn') || document.getElementById('erpProjectSyncBtn');
+  if(btn){ btn.disabled = true; btn.textContent = '⏳ جارِ الرفع...'; }
+  setTimeout(()=>{
+    const p = projectById(projectId);
+    if(!p) return;
+    const now = new Date().toISOString();
+    state.erpLinks[projectId] = Object.assign({}, state.erpLinks[projectId], {synced:true, lastSync: now});
+    state.erpApiLog.unshift({
+      id: uid('LOG'), time: now, method:'POST', direction:'out', endpoint:'/finance/programs-projects/sync',
+      projectId: p.id, projectCode: p.code, projectName: p.nameAr,
+      status:200, durationMs: Math.round(260+Math.random()*420),
+      message: 'تم رفع بيانات البرنامج/المشروع إلى نظام ERP بنجاح (Push).'
+    });
+    if(state.erpApiLog.length>50) state.erpApiLog.length = 50;
+    save();
+    closeModal();
+    toast(`تم رفع بيانات مشروع «${p.nameAr}» (${p.code}) إلى نظام ERP بنجاح`);
+    render();
+  }, 1200);
+}
+function receiveProjectFromErp(projectId, btnEl){
+  const btn = btnEl || document.getElementById('erpReceiveBtn') || document.getElementById('erpProjectReceiveBtn');
+  if(btn){ btn.disabled = true; btn.textContent = '⏳ جارِ السحب...'; }
+  setTimeout(()=>{
+    const p = projectById(projectId);
+    if(!p) return;
+    const before = Number(p.actualSpend||0);
+    const budget = Number(p.allocatedBudget||0);
+    const room = Math.max(0, budget - before);
+    const bump = room>0 && Math.random()<0.75 ? Math.round(Math.min(room, budget*0.01 + Math.random()*budget*0.02)) : 0;
+    if(bump>0){ p.actualSpend = before + bump; p.updatedAt = today(); }
+    const now = new Date().toISOString();
+    state.erpLinks[projectId] = Object.assign({}, state.erpLinks[projectId], {synced:true, lastSync: now});
+    state.erpApiLog.unshift({
+      id: uid('LOG'), time: now, method:'GET', direction:'in', endpoint:'/finance/programs-projects/'+p.code+'/pull',
+      projectId: p.id, projectCode: p.code, projectName: p.nameAr,
+      status:200, durationMs: Math.round(220+Math.random()*380),
+      message: bump>0
+        ? `تم سحب تحديث من ERP (Pull): المصروف الفعلي تغيّر من ${fmtMoney(before)} إلى ${fmtMoney(p.actualSpend)}.`
+        : 'تم الاتصال بـ ERP (Pull)، لا توجد تحديثات جديدة على بيانات هذا المشروع حالياً.'
+    });
+    if(state.erpApiLog.length>50) state.erpApiLog.length = 50;
+    save();
+    toast(`تم سحب أحدث بيانات مشروع «${p.nameAr}» (${p.code}) من نظام ERP`);
+    render();
+  }, 1200);
+}
+function receiveAllFromErp(){
+  const btn = document.getElementById('erpReceiveAllBtn');
+  if(btn){ btn.disabled = true; btn.textContent = '⏳ جارِ السحب من ERP...'; }
+  setTimeout(()=>{
+    let changed = 0;
+    const now0 = Date.now();
+    state.projects.forEach((p,idx)=>{
+      const before = Number(p.actualSpend||0);
+      const budget = Number(p.allocatedBudget||0);
+      const room = Math.max(0, budget - before);
+      if(room<=0 || Math.random()>=0.4) return;
+      const bump = Math.round(Math.min(room, budget*0.01 + Math.random()*budget*0.015));
+      if(bump<=0) return;
+      p.actualSpend = before + bump; p.updatedAt = today();
+      changed++;
+      const now = new Date(now0 + idx).toISOString();
+      state.erpLinks[p.id] = Object.assign({}, state.erpLinks[p.id], {synced:true, lastSync: now});
+      state.erpApiLog.unshift({
+        id: uid('LOG'), time: now, method:'GET', direction:'in', endpoint:'/finance/programs-projects/'+p.code+'/pull',
+        projectId: p.id, projectCode: p.code, projectName: p.nameAr,
+        status:200, durationMs: Math.round(220+Math.random()*380),
+        message: `تم سحب تحديث من ERP (Pull): المصروف الفعلي تغيّر من ${fmtMoney(before)} إلى ${fmtMoney(p.actualSpend)}.`
+      });
+    });
+    if(state.erpApiLog.length>50) state.erpApiLog.length = 50;
+    save();
+    toast(changed>0 ? `تم سحب التحديثات من ERP لعدد ${changed} مشروع` : 'تم الاتصال بنظام ERP، لا توجد تحديثات جديدة حالياً');
+    render();
+  }, 1400);
+}
 function pageSettings(){
   return head('النظام','الإعدادات العامة','تخصيص اسم النظام والمستخدم الحالي، ونسخ البيانات احتياطياً.') +
   `<div class="two">
@@ -6056,7 +6484,10 @@ function render(){
   }
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active', b.dataset.p===currentPage || (currentPage.startsWith('project') && b.dataset.p==='projects') || (currentPage.startsWith('initiative') && b.dataset.p==='initiatives') || (currentPage.startsWith('purchaseRequest') && b.dataset.p==='purchaseRequests') || (currentPage.startsWith('purchaseOrder') && b.dataset.p==='purchaseOrders') || (currentPage.startsWith('contract') && b.dataset.p==='contracts') || (currentPage.startsWith('vendor') && b.dataset.p==='vendors') || (currentPage.startsWith('paymentOrder') && b.dataset.p==='paymentOrders') || (currentPage.startsWith('journalEntry') && b.dataset.p==='journalEntries') || (currentPage.startsWith('account') && b.dataset.p==='accounts') || (currentPage.startsWith('reconciliation') && b.dataset.p==='bankReconciliation') || (currentPage.startsWith('auditFinding') && b.dataset.p==='auditFindings') || (currentPage.startsWith('employee') && b.dataset.p==='employees') || (currentPage.startsWith('payrollRun') && b.dataset.p==='payrollRuns') ));
   let html = '';
-   if(currentModule==='hr'){
+  if(currentPage==='erpFinanceLink'){
+    html = pageErpFinanceLink();
+  }
+   else if(currentModule==='hr'){
     if(currentPage==='hrDashboard') html = pageHRDashboard();
     else if(currentPage==='employees') html = pageEmployees();
     else if(currentPage==='employeeDetail') html = pageEmployeeDetail(currentProjectId);
@@ -6104,6 +6535,7 @@ function render(){
     else if(currentPage==='vendorDetail') html = pageVendorDetail(currentProjectId);
     else if(currentPage==='contracts') html = pageContracts();
     else if(currentPage==='financeReports') html = pageFinanceReports();
+    else if(currentPage==='erpFinanceLink') html = pageErpFinanceLink();
     else if(currentPage==='notifications') html = pageNotifications();
     else if(currentPage==='settings') html = pageSettings();
     else html = pageFinanceDashboard();
