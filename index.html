@@ -2460,7 +2460,7 @@ function pageProjectOverviewPanel(p, st, svar, bvar){
       <td>${esc(po.code)}</td><td>${esc(vendorById(po.vendorId)?.name||'—')}</td><td>${fmtDate(po.date)}</td>
       <td>${statusBadge(po.status, po.status==='مغلق'?'gray':po.status==='ملغى'?'red':'blue')}</td>
       <td>${fmtMoney(poTotal(po))}</td>
-      <td><button class="link" onclick="openPoForm(null,'${po.id}')">${t('تعديل')}</button></td>
+      <td><button class="link" onclick="openPoForm(null,'${po.id}')">${t('تعديل')}</button> <button class="link" onclick="deletePo('${po.id}','projectDetail','${p.id}')">${t('حذف')}</button></td>
     </tr>`).join('') || `<tr><td colspan="6"><div class="empty">${t('لا توجد طلبات شراء مرتبطة بهذا المشروع.')}</div></td></tr>`}</tbody></table></div>
   </div>
   <div class="card" style="margin-top:15px">
@@ -2796,10 +2796,11 @@ function submitPo(e, existingId, prId){
   save(); closeModal(); render();
 }
 function setPoStatus(id, status){ const po = poById(id); if(!po) return; po.status = status; save(); toast('تم تحديث حالة أمر الشراء'); render(); }
-function deletePo(id){
+function deletePo(id, backTo, backId){
   if(!confirm('حذف أمر الشراء لن يحذف أوامر الصرف المرتبطة تلقائياً، تأكد أولاً. هل تريد المتابعة؟')) return;
   state.finance.purchaseOrders = state.finance.purchaseOrders.filter(po=>po.id!==id);
-  save(); toast('تم حذف أمر الشراء'); go('purchaseOrders');
+  save(); toast('تم حذف أمر الشراء');
+  if(backTo) go(backTo, backId); else go('purchaseOrders');
 }
 
 /* ---- Payment Orders (ربط مباشر بالصرف الفعلي للمشروع) ---- */
@@ -3089,6 +3090,7 @@ function pagePurchaseOrders(){
       ${paid<total && po.status!=='ملغى' ? `<button class="btn sm" onclick="openPaymentForm(null,'${po.id}')">أمر صرف</button>` : ''}
       <button class="btn sm ghost" onclick="go('purchaseOrderDetail','${po.id}')">فتح</button>
       <button class="btn sm ghost" onclick="sendPOToDocuments('${po.id}')" title="إرسال لإدارة الوثائق">📤</button>
+      <button class="btn sm danger" onclick="deletePo('${po.id}')">حذف</button>
     </td>
   </tr>`}).join('') || `<tr><td colspan="7"><div class="empty">لا توجد أوامر شراء بعد.</div></td></tr>`}</tbody></table></div></div>`;
 }
